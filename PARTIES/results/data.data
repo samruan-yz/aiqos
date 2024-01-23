@@ -1,0 +1,51 @@
+bert 10% (1)
+    resnet % ()
+    调整次
+
+bert 20% (2)
+    resnet 55% (28)
+    调整6次
+    resnet: Cores: 12 LLC: 9 MB: 60
+    bert: Cores: 12 LLC: 2 MB: 40
+
+bert 30% (3)
+    resnet 50% (26)
+    调整4次
+    resnet: Cores: 12 LLC: 8 MB: 50
+    bert: Cores: 12 LLC: 3 MB: 50
+
+bert 40% (4)
+    resnet 40% (21)
+    调整1次
+    resnet: Cores: 12 LLC: 6 MB: 40
+    bert: Cores: 12 LLC: 5 MB: 60
+
+bert 50% (5)
+    resnet 30% (15)
+    调整5次
+    resnet: Cores: 11 LLC: 3 MB: 40
+    bert: Cores: 13 LLC: 8 MB: 60
+
+bert 60% (6)
+    resnet 15% (7)
+    调整7次
+    resnet: Cores: 8 LLC: 4 MB: 40
+    bert: Cores: 16 LLC: 7 MB: 60
+
+bert 70% (7)
+    resnet 10% (5)
+    调整23次
+    resnet: Cores: 7 LLC: 4 MB: 10
+    bert: Cores: 17 LLC: 7 MB: 90
+
+bert 80% (8)
+    resnet 5% (2)
+    调整16次
+    resnet: Cores: 7 LLC: 1 MB: 10
+    bert: Cores: 17 LLC: 10 MB: 90
+
+bert 90% (9)
+    resnet 5% (2)
+    调整16次
+    resnet: Cores: 6 LLC: 2 MB: 10
+    bert: Cores: 18 LLC: 9 MB: 90

@@ -1,0 +1,99 @@
+Start executing at 2023-12-03 16:27:56
+Make a decision! 0
+Start executing for 1 times
+resnet: 13.091572
+bert: 157.729153
+Upsize bert (0)
+Adjust cache
+resnet: Cores: 12 LLC: 5 MB: 50
+bert: Cores: 12 LLC: 6 MB: 50
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 13.308448
+bert: 155.516352
+resnet: 13.827666
+bert: 136.72683
+resnet: 13.371501
+bert: 135.437472
+resnet: 13.263348
+bert: 156.736851
+resnet: 13.322352
+bert: 131.078311
+Upsize bert (3)
+Adjust cache
+resnet: Cores: 12 LLC: 4 MB: 50
+bert: Cores: 12 LLC: 7 MB: 50
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 13.59654
+bert: 136.053397
+resnet: 13.813616
+bert: 146.509277
+resnet: 13.723203
+bert: 151.674665
+resnet: 13.817029
+bert: 125.824363
+resnet: 13.882371
+bert: 135.190166
+2 revert back
+Upsize bert (2)
+Adjust memory bandwidth
+resnet: Cores: 12 LLC: 4 MB: 40
+bert: Cores: 12 LLC: 7 MB: 60
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 13.699841
+bert: 144.611372
+resnet: 13.757033
+bert: 150.043682
+resnet: 13.701857
+bert: 137.649202
+resnet: 13.948651
+bert: 130.875052
+resnet: 13.727311
+bert: 124.387981
+2 revert back
+Upsize bert (1)
+Adjust core
+resnet: Cores: 11 LLC: 4 MB: 40
+bert: Cores: 13 LLC: 7 MB: 60
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 13.84367
+bert: 130.729462
+resnet: 13.784913
+bert: 129.742643
+resnet: 13.825071
+bert: 163.339063
+resnet: 13.918552
+bert: 129.750674
+resnet: 13.776564
+bert: 126.737758
+2 revert back
+Upsize bert (3)
+Adjust cache
+resnet: Cores: 11 LLC: 3 MB: 40
+bert: Cores: 13 LLC: 8 MB: 60
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 14.208495
+bert: 129.411622
+resnet: 14.289527
+bert: 125.724353
+resnet: 14.083977
+bert: 135.852207
+resnet: 14.082551
+bert: 131.713578
+resnet: 14.238445
+bert: 121.516896
+2 revert back
+All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.
+Current slack is 0.2.
+resnet: Cores: 11 LLC: 3 MB: 40
+bert: Cores: 13 LLC: 8 MB: 60
+

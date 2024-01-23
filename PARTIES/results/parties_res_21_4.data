@@ -1,0 +1,27 @@
+Start executing at 2023-11-29 03:59:31
+Make a decision! 0
+Start executing for 1 times
+resnet: 13.708211
+bert: 134.420069
+Upsize bert (0)
+Adjust memory bandwidth
+resnet: Cores: 12 LLC: 6 MB: 40
+bert: Cores: 12 LLC: 5 MB: 60
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 13.79884
+bert: 131.280369
+resnet: 13.823543
+bert: 127.336673
+resnet: 13.703965
+bert: 131.026674
+resnet: 13.894823
+bert: 126.681255
+resnet: 13.633741
+bert: 117.589297
+All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.
+Current slack is 0.2.
+resnet: Cores: 12 LLC: 6 MB: 40
+bert: Cores: 12 LLC: 5 MB: 60
+
