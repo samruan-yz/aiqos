@@ -42,7 +42,7 @@ def parse_arguments():
 #     "memcached": 600000,
 #     "mongodb": 300000000,
 # }
-TIMELIMITS = 300 # 5 min time limit. If can't find solution in 5 mintues, terminate the program.
+
 ROUND = 0
 INTERVAL = 0.1  # Frequency of monitoring, unit is second
 TIMELIMIT = 60  # How long to run this controller, unit is in second.
@@ -116,7 +116,11 @@ def init():
     for i in range(11 - 11 // NUM * NUM):
         WAY[i + 1] += 1
 
+    # Enforce harware isolation
     propogateCore()
+    # Monitoring of CPU and cache utilizataion is not needed in PARTIES manager. You can comment them out. These are just legacy codes and may be useful if you want to monitor real-time resource usage.
+    # monproc = subprocess.Popen("python /home/sc2682/scripts/monitor/monitorN.py %d" % TIMELIMIT, shell=True, stdout=FF, stderr=FF, preexec_fn=os.setsid);
+
 
 def main():
     global TIMELIMIT, RESNET_QPS, BERT_QPS
@@ -394,7 +398,6 @@ def wait():
     # # Run code here
     # print("Round: ", ROUND)
     subprocess.call(["bash", RUN_SCRIPT])
-    #run_script(RUN_SCRIPT)
     ROUND += 1
     for i in range(1, NUM + 1):
         if LDOWN[i] > 0:
@@ -642,13 +645,12 @@ def propogateMemoryBandwidth(idx=None):
 
 #Function to Run script with time limit
 
-def run_script(script_path):
-    global TIMELIMITS
+def run_script(script_path, timelimit):
     try:
-        subprocess.run(['bash', script_path], timeout=TIMELIMITS, check=True)
+        subprocess.run(['bash', script_path], timeout=timelimit, check=True)
         print(f"Script {script_path} completed successfully.")
     except subprocess.TimeoutExpired:
-        print(f"Script {script_path} exceeded the time limit of {TIMELIMITS} seconds and was terminated.")
+        print(f"Script {script_path} exceeded the time limit of {timelimit} seconds and was terminated.")
     except subprocess.CalledProcessError:
         print(f"Script {script_path} failed to run.")
 

@@ -116,7 +116,11 @@ def init():
     for i in range(11 - 11 // NUM * NUM):
         WAY[i + 1] += 1
 
+    # Enforce harware isolation
     propogateCore()
+    # Monitoring of CPU and cache utilizataion is not needed in PARTIES manager. You can comment them out. These are just legacy codes and may be useful if you want to monitor real-time resource usage.
+    # monproc = subprocess.Popen("python /home/sc2682/scripts/monitor/monitorN.py %d" % TIMELIMIT, shell=True, stdout=FF, stderr=FF, preexec_fn=os.setsid);
+
 
 def main():
     global TIMELIMIT, RESNET_QPS, BERT_QPS
@@ -394,7 +398,6 @@ def wait():
     # # Run code here
     # print("Round: ", ROUND)
     subprocess.call(["bash", RUN_SCRIPT])
-    #run_script(RUN_SCRIPT)
     ROUND += 1
     for i in range(1, NUM + 1):
         if LDOWN[i] > 0:
