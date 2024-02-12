@@ -32,15 +32,6 @@ MEMORY_BW = 100
 # Max units of (cores, LLC ways, memory bandwidth)
 NUM_UNITS = [32, 16, 10]
 
-# Commands to get MSRs
-WR_MSR_COMM = "wrmsr -a "
-RD_MSR_COMM = "rdmsr -a -u "
-
-# MSR register requirements
-IA32_PERF_GBL_CTR = "0x38F"  # Need bits 34-32 to be 1
-IA32_PERF_FX_CTRL = "0x38D"  # Need bits to be 0xFFF
-MSR_PERF_FIX_CTR0 = "0x309"
-
 # Amount of time to sleep after each sample
 SLEEP_TIME = 2
 
@@ -105,8 +96,6 @@ def set_cores(cores):
                 lines[idx] = f"{app_name}_core_start={current_start}\n"
             elif line.startswith(app_name + "_core_end"):
                 lines[idx] = f"{app_name}_core_end={current_end}\n"
-
-        # print("Change Core of", APP[i], ": ", len(CORES[i]), "cores")
 
     # Write back
     with open(RUN_SCRIPT, "w") as file:
