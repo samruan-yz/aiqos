@@ -1,0 +1,184 @@
+Start executing at 2024-02-16 00:57:46
+Make a decision! 0
+Start executing for 1 times
+resnet: 10567.919233
+bert: 109.361553
+Upsize resnet (0)
+Adjust core
+resnet: Cores: 17 LLC: 8 MB: 50
+bert: Cores: 15 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 9068.218164
+bert: 109.948702
+resnet: 8960.537576
+bert: 112.10065
+resnet: 8768.906918
+bert: 109.786154
+resnet: 8767.128278
+bert: 109.929206
+resnet: 9018.020569
+bert: 110.965858
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 18 LLC: 8 MB: 50
+bert: Cores: 14 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 7253.295262
+bert: 111.184429
+resnet: 7288.125421
+bert: 110.812319
+resnet: 7229.650017
+bert: 110.556177
+resnet: 7257.854818
+bert: 110.03733
+resnet: 7251.685941
+bert: 110.123928
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 19 LLC: 8 MB: 50
+bert: Cores: 13 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 5623.464546
+bert: 111.476843
+resnet: 5818.094415
+bert: 111.952636
+resnet: 5797.679221
+bert: 111.522236
+resnet: 5732.608941
+bert: 112.277482
+resnet: 5812.168326
+bert: 111.205629
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 20 LLC: 8 MB: 50
+bert: Cores: 12 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 4249.019819
+bert: 111.343519
+resnet: 4335.843918
+bert: 112.038602
+resnet: 4287.060505
+bert: 111.650781
+resnet: 4340.514964
+bert: 113.316426
+resnet: 4235.078393
+bert: 110.521673
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 21 LLC: 8 MB: 50
+bert: Cores: 11 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 3168.897753
+bert: 113.740067
+resnet: 3116.646664
+bert: 112.837391
+resnet: 3136.626241
+bert: 112.365182
+resnet: 3105.888518
+bert: 112.905875
+resnet: 3068.103903
+bert: 112.689255
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 22 LLC: 8 MB: 50
+bert: Cores: 10 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 2007.602563
+bert: 113.860311
+resnet: 1996.287195
+bert: 114.04038
+resnet: 1991.110802
+bert: 114.041531
+resnet: 2006.500719
+bert: 113.255663
+resnet: 1949.024606
+bert: 113.673063
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 23 LLC: 8 MB: 50
+bert: Cores: 9 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 1074.589567
+bert: 115.154786
+resnet: 1088.235197
+bert: 116.131849
+resnet: 1001.29043
+bert: 115.853636
+resnet: 1087.376881
+bert: 115.858554
+resnet: 1092.658732
+bert: 115.830145
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 24 LLC: 8 MB: 50
+bert: Cores: 8 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 349.487493
+bert: 114.528379
+resnet: 374.743891
+bert: 116.091569
+resnet: 305.924607
+bert: 115.663833
+resnet: 360.499831
+bert: 115.740521
+resnet: 345.11935
+bert: 115.737954
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 25 LLC: 8 MB: 50
+bert: Cores: 7 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 34.640897
+bert: 115.284663
+resnet: 34.450778
+bert: 115.869423
+resnet: 34.446738
+bert: 115.219252
+resnet: 35.792921
+bert: 115.608934
+resnet: 35.943609
+bert: 115.524039
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 26 LLC: 8 MB: 50
+bert: Cores: 6 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 28.967176
+bert: 118.982729
+resnet: 25.935997
+bert: 119.041354
+resnet: 25.857584
+bert: 121.120105
+resnet: 26.177373
+bert: 120.410434
+resnet: 25.737059
+bert: 118.272376
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 27 LLC: 8 MB: 50
+bert: Cores: 5 LLC: 7 MB: 50
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 19.997058
+bert: 141.640774

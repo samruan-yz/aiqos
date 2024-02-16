@@ -1,0 +1,40 @@
+Start executing for 5 times
+resnet: 13.860279
+bert: 129.35769
+resnet: 13.887311
+bert: 131.559392
+resnet: 13.90014
+bert: 128.505125
+resnet: 13.854751
+bert: 128.569872
+resnet: 13.861139
+bert: 129.897073
+-1 revert back
+Adjust memory bandwidth
+Start executing for 5 times
+resnet: 11.532509
+bert: 130.299407
+resnet: 11.548524
+bert: 129.400165
+resnet: 11.540499
+bert: 127.441956
+resnet: 11.541556
+bert: 127.464204
+resnet: 11.547473
+bert: 129.084886
+Start executing for 5 times
+resnet: 11.526664
+bert: 127.749413
+resnet: 11.545515
+bert: 127.630894
+resnet: 11.505711
+bert: 131.567364
+resnet: 11.545082
+bert: 128.387315
+resnet: 11.56561
+bert: 128.488484
+All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.
+Current slack is 0.2.
+resnet: Cores: 12 LLC: 3 MB: 30
+bert: Cores: 20 LLC: 12 MB: 70
+

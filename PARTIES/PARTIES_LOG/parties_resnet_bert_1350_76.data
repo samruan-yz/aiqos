@@ -1,0 +1,27 @@
+Start executing at 2024-02-15 20:09:45
+Make a decision! 0
+Start executing for 1 times
+resnet: 14.954112
+bert: 131.716433
+Upsize bert (0)
+Adjust cache
+resnet: Cores: 16 LLC: 7 MB: 50
+bert: Cores: 16 LLC: 8 MB: 50
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 15.038998
+bert: 125.233849
+resnet: 14.854143
+bert: 125.055516
+resnet: 14.823106
+bert: 125.993076
+resnet: 14.821118
+bert: 126.414142
+resnet: 14.896009
+bert: 126.385861
+All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.
+Current slack is 0.2.
+resnet: Cores: 16 LLC: 7 MB: 50
+bert: Cores: 16 LLC: 8 MB: 50
+

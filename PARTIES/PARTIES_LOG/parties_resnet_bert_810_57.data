@@ -1,0 +1,16 @@
+Start executing for 5 times
+resnet: 12.83687
+bert: 118.53016
+resnet: 12.775377
+bert: 118.172321
+resnet: 12.930503
+bert: 117.847431
+resnet: 12.608319
+bert: 118.35677
+resnet: 12.867426
+bert: 117.524261
+All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.
+Current slack is 0.2.
+resnet: Cores: 11 LLC: 8 MB: 50
+bert: Cores: 16 LLC: 7 MB: 50
+

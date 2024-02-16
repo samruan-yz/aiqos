@@ -4,51 +4,36 @@ import random
 import sys
 import os
 import collections
-import threading
 from datetime import datetime
 
-# sys.path.append('/home/sc2682/scripts/monitor')
-# from monitorN import startMonitoring, endMonitoring
 import subprocess
 
 RESNET_QPS = 27
 BERT_QPS = 7
+ALL_VIOLATION_LIMIT = -0.1
 
-if len(sys.argv) < 3:
-    print("Usage: script.py param1 param2")
+if len(sys.argv) < 5:
+    print("Usage: script.py param1 param2 core llc")
     sys.exit(1)
 RESNET_QPS = sys.argv[1]
 BERT_QPS = sys.argv[2]
+TOTAL_CORES = int(sys.argv[3])
+TOTAL_LLC = int(sys.argv[4])
 
-
-CONFIG = "/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/input.txt"  # default path to the input config.txt file
-LATENCY_FILE = f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/data_point/resnet_bert_search/result_{RESNET_QPS}_{BERT_QPS}.data"
-RUN_SCRIPT = "/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/collocation_run_resnet_bert.sh"
-LOG_FILE = f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/PARTIES_LOG/parties_res_{RESNET_QPS}_{BERT_QPS}.data"
-
-
-# if len(sys.argv) > 1:
-#     CONFIG = sys.argv[1]
-
-# QoS target of each application, in nanoseconds.
-# QOS = {
-#     "moses": 15000000,
-#     "xapian": 5000000,
-#     "nginx": 10000000,
-#     "sphinx": 2500000000,
-#     "memcached": 600000,
-#     "mongodb": 300000000,
-# }
+CONFIG = "/data1/yufenggu/inference_spr/code/baselines/PARTIES/config.txt"  # default path to the input config.txt file
+LATENCY_FILE = "/data1/yufenggu/inference_spr/code/data_point/resnet_bert_search/PARTIES_{}_{}.data".format(RESNET_QPS, BERT_QPS)
+RUN_SCRIPT = "/data1/yufenggu/inference_spr/code/collocation_run_resnet_bert_PARTIES.sh"
+LOG_FILE = "/data1/yufenggu/inference_spr/code/baselines/PARTIES/PARTIES_LOG/parties_resnet_bert_{}_{}.data".format(RESNET_QPS, BERT_QPS)
 
 ROUND = 0
 INTERVAL = 0.1  # Frequency of monitoring, unit is second
-TIMELIMIT = 60  # How long to run this controller, unit is in second.
+TIMELIMIT = 30  # How long to run this controller, unit is in second.
 REST = 100
 NUM = 0  # Number of colocated applications
 APP = [None for i in range(10)]  # Application names
 IP = [None for i in range(10)]  # IP of clients that run applications
 QoS = [None for i in range(10)]  # Target QoS of each application
-ECORES = [i for i in range(0, 24, 1)]  # unallocated cores
+ECORES = [i for i in range(0, TOTAL_CORES, 1)]  # unallocated cores
 CORES = [None for i in range(10)]  # CPU allocation
 LOAD = []
 FREQ = [2200 for i in range(10)]  # Frequency allocation
@@ -76,6 +61,9 @@ helpID = 0  # Application ID that is being helped. >0 means upSize, <0 means Dow
 victimID = 0  # Application that is helping helpID, thus is a innocent victim
 TOLERANCE = 5  # Check these times of latency whenver an action is taken
 
+# if len(sys.argv) == 6:
+#     TIMELIMIT = sys.argv[5]
+# TIMELIMIT = "0"
 
 def init():
     global EWAY, MLat, TIMELIMIT, CONFIG, NUM, APP, QoS, Lat, Slack, ECORES, CORES, FREQ, WAY, CPU, MEM, INTERVAL
@@ -99,7 +87,7 @@ def init():
             # IP[i] = words[1]
             # assert APP[i] in QOS
             QoS[i] = int(words[1])
-            WAY[i] = 11 // NUM
+            WAY[i] = TOTAL_LLC // NUM
             MLat[i] = collections.deque(maxlen=(int(1.0 / INTERVAL)))
             MEM[i] = int(100 / NUM)
     # Initialize resource parititioning
@@ -107,7 +95,7 @@ def init():
     while len(ECORES) > 0:
         CORES[j + 1].append(ECORES.pop())
         j = (j + 1) % NUM
-    for i in range(11 - 11 // NUM * NUM):
+    for i in range(TOTAL_LLC - TOTAL_LLC // NUM * NUM):
         WAY[i + 1] += 1
 
     # Enforce harware isolation
@@ -185,7 +173,7 @@ def makeDecision():
                 cnt += 1
             else:
                 cnt -= 1
-        if cnt <= 0 or (State[helpID] == 2 and FREQ[helpID] == 2300):
+        if cnt <= 4 or (State[helpID] == 2 and FREQ[helpID] == 2300):
             # return revert(helpID)
             revert(helpID)
         # else:
@@ -205,14 +193,14 @@ def makeDecision():
             wait()
             flag = True
             for j in range(1, NUM + 1):
-                if Slack[j] < 0.05:
+                if Slack[j] < 0:
                     flag = False
                     break
             if flag == False:
                 cnt -= 1
             else:
                 cnt += 1
-        if cnt <= 0:
+        if cnt <= 4:
             # return revert(-helpID)  # Revert back as it doesn't benefit from this resource
             revert(helpID)
             #  wait()
@@ -224,14 +212,15 @@ def makeDecision():
                 wait()
                 flag = True
                 for j in range(1, NUM + 1):
-                    if Slack[j] < 0.05:
+                    # if Slack[j] < 0.05:
+                    if Slack[j] < 0:
                         flag = False
                         break
                 if flag == False:
                     cnt -= 1
                 else:
                     cnt += 1
-            if cnt <= 0:
+            if cnt <= 4:
                 print("Start executing for ", TOLERANCE, " times")
                 with open(LOG_FILE, "a") as file:
                     file.write(f"Start executing for {TOLERANCE} times\n")
@@ -250,7 +239,8 @@ def makeDecision():
         idx = -1
         victimID = 0
         for i in range(1, NUM + 1):  # First find if any app violates QoS
-            if Slack[i] < 0.05 and LSlack[i] < 0.05:
+            # if Slack[i] < 0.05 and LSlack[i] < 0.05:
+            if Slack[i] < 0 and LSlack[i] < 0:
                 if idx == -1 or LSlack[i] < LSlack[idx]:
                     idx = i
             elif (
@@ -280,78 +270,6 @@ def makeDecision():
                 )
             return False
     return True
-
-
-# def makeDecision():
-#     global Lat, LSlack, TOLERANCE, LLSlack, REST, Slack, NUM, FREQ, helpID, victimID
-#     print("Make a decision! ", helpID)
-#     with open('decision.txt', 'a') as file:
-#         file.write(f"Make a decision! {helpID}\n")
-#     if helpID > 0:
-#         cur = Lat[helpID]
-#         latencies = []
-#         print("Start executing for ", TOLERANCE, " times")
-#         with open('decision.txt', 'a') as file:
-#             file.write(f"Start executing for {TOLERANCE} times\n")
-#          print("Start executing for ", TOLERANCE, " times")
-#         with open('decision.txt', 'w') as file:
-#             file.write(f"Start executing for {TOLERANCE} times\n")
-#         for i in range(TOLERANCE):
-#             wait()
-#             slacks.append(Slack[-helpID])
-#         if sum(slacks) / len(slacks) < 0.05:
-#             revert(helpID)
-#         helpID = victimID = 0
-#     else:
-#         print("Start executing for 1 times")
-#         with open('decision.txt', 'a') as file:
-#                 file.write("Start executing for 1 times" + "\n")
-#         wait()
-#     if helpID == 0:  # Don't need to check any application before making a new decision
-#         idx = -1
-#         victimID = 0
-#         for i in range(1, NUM + 1):  # First find if any app violates QoS
-#             if Slack[i] < 0.05 and LSlack[i] < 0.05:
-#                 if idx == -1 or LSlack[i] < LSlack[idx]:
-#                     idx = i
-#             elif (
-#                 (LDOWN[i] == 0)
-#                 and Slack[i] > 0.2
-#                 and LSlack[i] > 0.2
-#                 and (victimID == 0 or Slack[i] > Slack[victimID])
-#             ):
-#                 victimID = i
-#         if idx != -1:
-#             return upSize(idx)  # If found, give more resources to this app
-#         elif (
-#             saveEnergy == True and victimID > 0
-#         ):  # If not found, try removing resources
-#             return downSize(victimID)
-#         else:
-#             print("Start executing for 1 times")
-#             with open('decision.txt', 'a') as file:
-#                     file.write("Start executing for 1 times" + "\n")
-#             wait()
-#     return True
-#   for i in range(TOLERANCE):
-#             wait()
-#             latencies.append(Lat[helpID])
-#         if sum(latencies) / len(latencies) >= cur or (State[helpID] == 2 and FREQ[helpID] == 2300):
-#             revert(helpID)
-#         helpID = victimID = 0
-#     elif helpID < 0:
-#         cur = Lat[-helpID]
-#         slacks = []
-
-# FSM state of resource adjustment
-# -3: give it fewer cache
-# -2: give it fewer frequency
-# -1: give it fewer cores
-#  0: not in adjustment
-#  1: give it more cores
-#  2: give it more frequency
-#  3: give it more cache
-
 
 def nextState(idx, upsize=True):
     global State
@@ -446,35 +364,18 @@ def downSize(idx):
         file.write("No way to downsize any more..." + ")\n")
     return False
 
-
-def wait():
-    global INTERVAL, TIMELIMIT, ROUND
-    # sleep(INTERVAL)
-    # # Run code here
-    # print("Round: ", ROUND)
-    subprocess.call(["bash", RUN_SCRIPT])
-    ROUND += 1
-    for i in range(1, NUM + 1):
-        if LDOWN[i] > 0:
-            LDOWN[i] -= 1
-    getLat()
-    getData()
-    record()
-    if TIMELIMIT != -1:
-        TIMELIMIT -= INTERVAL
-        if TIMELIMIT < 0:
-            # printout()
-            exit(0)
-
-
 def getLat():
     global APP, Lat, MLat, LLSlack, LSlack, Slack, QoS, NUM
+    # print(LATENCY_FILE, flush=True)
+    # with open(LOG_FILE, "a") as file:
+    #     file.write(LATENCY_FILE)
     with open(LATENCY_FILE, "r") as file:
         # Skip the first and second line (caption)
         file.readline()
         file.readline()
 
         # Extract values for the given number of lines
+        all_violation = 0
         for i in range(1, NUM + 1):
             app = APP[i]
             if APP[i][-1] == "2":
@@ -489,55 +390,35 @@ def getLat():
             LSlack[i] = 1 - sum(MLat[i]) * 1.0 / len(MLat[i]) / QoS[i]
 
             Slack[i] = (QoS[i] - Lat[i]) * 1.0 / QoS[i]
-            # print("  --", APP[i], ":", Lat[i], "(", Slack[i], LSlack[i], ")")]
+            if Slack[i] < ALL_VIOLATION_LIMIT:
+                all_violation += 1
+            # print("  --", APP[i], ":", Lat[i], "(", Slack[i], LSlack[i], ")", flush=True)
             with open(LOG_FILE, "a") as record:
                 record.write(f"{APP[i]}: {float(values[13])}\n")
+        if all_violation == NUM:
+            exit(0)
 
-
-def getData():
-    global NUM, cCPU, CPU, CORES, MEM
-    tmp = 0
-    # Monitoring of CPU and cache utilizataion is not needed in PARTIES manager. You can comment them out. These are just legacy codes and may be useful if you want to monitor real-time resource usage.
-    # with open("/home/sc2682/scripts/monitor/cpu.txt", "r") as ff:
-    #    lines = ff.readlines();
-    #    while (len(lines) >=1 and "Average" in lines[-1]):
-    #        lines = lines[:-1]
-    #    if (len(lines) >= 22):
-    #        lines = lines[-22:]
-    #        cnt = [0 for i in xrange(0, NUM+10, 1)]
-    #        for line in lines:
-    #            if "Average" in line:
-    #                break
-    #            words = line.split()
-    #            if len(words)<10:
-    #                break
-    #            cpuid = int(words[2])
-    #            tmp += float(words[3])+float(words[5])+float(words[6])+float(words[8])
-    #            for j in xrange(1, NUM+1, 1):
-    #                if cpuid in CORES[j]:
-    #                    CPU[j] += float(words[3])+float(words[5])+float(words[6])+float(words[8])
-    #                    cnt[j] += 1
-    #                break
-    #        for j in xrange(1, NUM+1):
-    #            if cnt[j] > 0:
-    #                CPU[j] /= cnt[j]
-    # cCPU.append(tmp/14.0)
-
-    # with open("/home/sc2682/scripts/monitor/cat.txt", "r") as ff:
-    #    lines = ff.readlines();
-    #    if (len(lines) >= 22):
-    #        lines = lines[-22:]
-    #        for line in lines:
-    #            words = line.split()
-    #            if words[0] == "TIME" or words[0] == "CORE" or words[0] == "WARN":
-    #                continue
-    #            if ("WARN:" in words[0]) or ("Ter" in words[0]):
-    #                break
-    #            cpuid = int(words[0])
-    #            for j in xrange(1, NUM+1):
-    #                if cpuid in CORES[j]:
-    #                    MEM[j] += float(words[4])+float(words[5])
-
+def wait():
+    global INTERVAL, TIMELIMIT, ROUND
+    # sleep(INTERVAL)
+    # # Run code here
+    # print("Round: ", ROUND, flush=True)
+    # with open(LOG_FILE, "a") as file:
+    #     file.write("Round: ")
+    subprocess.run(["bash", RUN_SCRIPT])
+    # print("Flag", flush=True)
+    ROUND += 1
+    for i in range(1, NUM + 1):
+        if LDOWN[i] > 0:
+            LDOWN[i] -= 1
+    getLat()
+    # getData()
+    # record()
+    if TIMELIMIT != -1:
+        TIMELIMIT -= INTERVAL
+        if TIMELIMIT < 0:
+            # printout()
+            exit(0)
 
 def coreStr(cores):
     return ",".join(str(e) for e in cores)
@@ -695,24 +576,26 @@ def propogateCache(idx=None):
         llc_bin = ["0"] * length
         # Set the specific positions to 1 based on the ways_value
         for i in range(ways_value):
+            print(start_position - i)
             llc_bin[start_position - i] = "1"
         # Convert the list of binary digits to a string and then to its hexadecimal format
         hex_value = hex(int("".join(llc_bin), 2))
+        pad = ((length-1-1) // 4) + 1
         return "0x" + hex_value[2:].rjust(
-            3, "0"
+            pad, "0"
         )  # Pad with leading zeros to ensure 3 characters
 
     with open(RUN_SCRIPT, "r") as file:
         lines = file.readlines()
 
-    current_position = 11  # Start from the rightmost position
+    current_position = TOTAL_LLC  # Start from the rightmost position
 
     for i in range(1, NUM + 1):
         app_name = APP[i]
 
         # Update script based on the WAYS values
         ways_value = WAY[i]
-        llc_hex = ways_to_llc(ways_value, current_position)
+        llc_hex = ways_to_llc(ways_value, current_position, TOTAL_LLC+1)
         current_position -= ways_value  # update the starting position for the next APP
 
         for idx, line in enumerate(lines):
@@ -741,184 +624,6 @@ def propogateMemoryBandwidth(idx=None):
     # Write the modified content back to the file
     with open(RUN_SCRIPT, "w") as file:
         file.writelines(lines)
-
-
-def record():
-    global CPU, LOAD, NUM, Lat, rrLat, saveEnergy, rLat, CORES, rCORES, WAY, rWAY, FREQ, rFREQ
-    # for i in range(1, NUM + 1):
-    #     rrLat[i].append(Lat[i])
-    #     rLat[i].append(1 - LSlack[i])
-    #     rCORES[i].append(len(CORES[i]))
-    #     rWAY[i].append(WAY[i])
-    #     rFREQ[i].append(FREQ[i])
-    # p = subprocess.Popen(
-    #     "curl http://128.253.128.66:84/memcached/count.txt | tail -1",
-    #     shell=True,
-    #     stdout=subprocess.PIPE,
-    #     stderr=FF,
-    #     preexec_fn=os.setsid,
-    #     bufsize=0,
-    # )
-    # # LOAD.append(10)
-    # out, err = p.communicate()
-    # if out != "":
-    #     LOAD.append(int(out) - 1)
-    #     # if int(out) > 24:
-    #     #    saveEnergy = False
-    #     # else:
-    #     #    saveEnergy = True
-    # elif len(LOAD) > 0:
-    #     LOAD.append(LOAD[-1])
-    # else:
-    #     LOAD.append(0)
-
-
-def printout():
-    global NUM, rrLat, LOAD, rLat, rCORES, cCPU, rFREQ, rWAY
-    print("CPU Utilization: ", sum(cCPU) * 1.0 / len(cCPU))
-    if PLOT == True:
-        of = open("/home/sc2682/scripts/manage/results.txt", "w")
-        for i in range(1, NUM + 1):
-            for item in rrLat[i]:
-                of.write("%d " % item)
-            of.write("\n")
-            for item in rLat[i]:
-                of.write("%f " % item)
-            of.write("\n")
-            for item in rCORES[i]:
-                of.write("%d " % item)
-            of.write("\n")
-            for item in rFREQ[i]:
-                of.write("%d " % item)
-            of.write("\n")
-            for item in rWAY[i]:
-                of.write("%d " % item)
-            of.write("\n")
-        for item in LOAD:
-            of.write("%d " % item)
-        of.write("\n")
-        of.close()
-
-
-def adjustFreq(idx, num):
-    # global FREQ, APP, State
-    # assert FREQ[idx] >= 1200 and FREQ[idx] <= 2300
-    # if num < 0:
-    #     if FREQ[idx] == 1200:
-    #         return (
-    #             False  # Frequency is already at the lowest. Cannot be reduced further
-    #         )
-    #     else:
-    #         FREQ[idx] += 100 * num
-    #         propogateFreq(idx)
-    # else:
-    #     if FREQ[idx] == 2300:
-    #         return False  # Shuang
-    #         victimID = 0
-    #         for i in range(1, NUM + 1):
-    #             if (
-    #                 i != idx
-    #                 and FREQ[i] > 1200
-    #                 and (victimID == 0 or Slack[i] > Slack[victimID])
-    #             ):
-    #                 victimID = i
-    #         if victimID == 0:
-    #             return False
-    #         else:
-    #             FREQ[victimID] -= 100 * num
-    #             propogateFreq(victimID)
-    #             if State[victimID] == State[idx]:
-    #                 nextState(victimID)
-    #     else:
-    #         FREQ[idx] += 100 * num
-    #         propogateFreq(idx)
-    print("Adjust freq")
-    return True
-
-
-def propogateFreq(idx=None):
-    # print("Propogate freq")
-    global CORES, FREQ, NUM, APP
-    # if idx == None:
-    #     subprocess.call(
-    #         ["cpupower", "-c", "0-87", "frequency-set", "-g", "userspace"],
-    #         stdout=FF,
-    #         stderr=FF,
-    #     )
-    #     subprocess.call(
-    #         ["cpupower", "-c", "0-87", "frequency-set", "-f", "2200MHz"],
-    #         stdout=FF,
-    #         stderr=FF,
-    #     )
-    #     for i in range(1, NUM + 1):
-    #         print("    Change Frequency of", APP[i], ":", FREQ[i])
-    #         if FREQ[i] <= 2200:
-    #             subprocess.call(
-    #                 [
-    #                     "cpupower",
-    #                     "-c",
-    #                     coreStrHyper(CORES[i]),
-    #                     "frequency-set",
-    #                     "-f",
-    #                     "%dMHz" % FREQ[i],
-    #                 ],
-    #                 stdout=FF,
-    #                 stderr=FF,
-    #             )
-    #         else:
-    #             subprocess.call(
-    #                 [
-    #                     "cpupower",
-    #                     "-c",
-    #                     coreStrHyper(CORES[i]),
-    #                     "frequency-set",
-    #                     "-g",
-    #                     "performance",
-    #                 ],
-    #                 stdout=FF,
-    #                 stderr=FF,
-    #             )
-    # else:
-    #     print("    Change Frequency of", APP[idx], ":", FREQ[idx])
-    #     if FREQ[idx] <= 2200:
-    #         subprocess.call(
-    #             [
-    #                 "cpupower",
-    #                 "-c",
-    #                 coreStrHyper(CORES[idx]),
-    #                 "frequency-set",
-    #                 "-g",
-    #                 "userspace",
-    #             ],
-    #             stdout=FF,
-    #             stderr=FF,
-    #         )
-    #         subprocess.call(
-    #             [
-    #                 "cpupower",
-    #                 "-c",
-    #                 coreStrHyper(CORES[idx]),
-    #                 "frequency-set",
-    #                 "-f",
-    #                 "%dMHz" % FREQ[idx],
-    #             ],
-    #             stdout=FF,
-    #             stderr=FF,
-    #         )
-    #     else:
-    #         subprocess.call(
-    #             [
-    #                 "cpupower",
-    #                 "-c",
-    #                 coreStrHyper(CORES[idx]),
-    #                 "frequency-set",
-    #                 "-g",
-    #                 "performance",
-    #             ],
-    #             stdout=FF,
-    #             stderr=FF,
-    #         )
-
 
 if __name__ == "__main__":
     main()

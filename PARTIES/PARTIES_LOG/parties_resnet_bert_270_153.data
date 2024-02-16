@@ -1,0 +1,208 @@
+Start executing at 2024-02-15 09:20:26
+Make a decision! 0
+Start executing for 1 times
+resnet: 10.216432
+bert: 154.445347
+Upsize bert (0)
+Adjust core
+resnet: Cores: 15 LLC: 8 MB: 50
+bert: Cores: 17 LLC: 7 MB: 50
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 10.261566
+bert: 155.227349
+resnet: 10.275058
+bert: 155.544069
+resnet: 10.231897
+bert: 159.374622
+resnet: 10.256041
+bert: 155.576927
+resnet: 10.229547
+bert: 156.369447
+2 revert back
+Upsize bert (3)
+Adjust cache
+resnet: Cores: 15 LLC: 7 MB: 50
+bert: Cores: 17 LLC: 8 MB: 50
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 10.229202
+bert: 154.601447
+resnet: 10.222071
+bert: 152.851276
+resnet: 10.253981
+bert: 155.068145
+resnet: 10.255124
+bert: 150.029021
+resnet: 10.28758
+bert: 158.153202
+2 revert back
+Upsize bert (2)
+Adjust memory bandwidth
+resnet: Cores: 15 LLC: 7 MB: 40
+bert: Cores: 17 LLC: 8 MB: 60
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 10.397306
+bert: 151.536085
+resnet: 10.403532
+bert: 148.306715
+resnet: 10.403443
+bert: 151.882002
+resnet: 10.396235
+bert: 151.116035
+resnet: 10.393613
+bert: 157.187137
+Upsize bert (2)
+Adjust memory bandwidth
+resnet: Cores: 15 LLC: 7 MB: 30
+bert: Cores: 17 LLC: 8 MB: 70
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 11.500744
+bert: 157.724673
+resnet: 11.467268
+bert: 150.846158
+resnet: 11.493438
+bert: 151.828235
+resnet: 11.460445
+bert: 155.006432
+resnet: 11.486341
+bert: 155.235802
+2 revert back
+Upsize bert (1)
+Adjust core
+resnet: Cores: 14 LLC: 7 MB: 30
+bert: Cores: 18 LLC: 8 MB: 70
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 11.472618
+bert: 151.140542
+resnet: 11.433579
+bert: 151.294383
+resnet: 11.473536
+bert: 148.705355
+resnet: 11.489203
+bert: 151.016788
+resnet: 11.482308
+bert: 151.766273
+Upsize bert (1)
+Adjust core
+resnet: Cores: 13 LLC: 7 MB: 30
+bert: Cores: 19 LLC: 8 MB: 70
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 11.502843
+bert: 151.367485
+resnet: 11.49047
+bert: 148.601301
+resnet: 11.474742
+bert: 153.009024
+resnet: 11.508179
+bert: 150.868723
+resnet: 11.488905
+bert: 148.898189
+2 revert back
+Upsize bert (3)
+Adjust cache
+resnet: Cores: 13 LLC: 6 MB: 30
+bert: Cores: 19 LLC: 9 MB: 70
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 11.475299
+bert: 144.45039
+resnet: 11.52205
+bert: 145.511183
+resnet: 11.501387
+bert: 145.065477
+resnet: 11.484856
+bert: 145.965617
+resnet: 11.452596
+bert: 144.285867
+Upsize bert (3)
+Adjust cache
+resnet: Cores: 13 LLC: 5 MB: 30
+bert: Cores: 19 LLC: 10 MB: 70
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 11.488119
+bert: 144.119298
+resnet: 11.477664
+bert: 140.718929
+resnet: 11.504218
+bert: 143.47526
+resnet: 11.480668
+bert: 140.057202
+resnet: 11.502276
+bert: 144.128769
+Upsize bert (3)
+Adjust cache
+resnet: Cores: 13 LLC: 4 MB: 30
+bert: Cores: 19 LLC: 11 MB: 70
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 11.548327
+bert: 140.618116
+resnet: 11.519523
+bert: 139.921206
+resnet: 11.532681
+bert: 139.958453
+resnet: 11.550693
+bert: 139.045947
+resnet: 11.53783
+bert: 140.090721
+Upsize bert (3)
+Adjust cache
+resnet: Cores: 13 LLC: 3 MB: 30
+bert: Cores: 19 LLC: 12 MB: 70
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 11.55569
+bert: 136.516512
+resnet: 11.585198
+bert: 135.524593
+resnet: 11.558637
+bert: 137.428943
+resnet: 11.556211
+bert: 138.201144
+resnet: 11.595645
+bert: 143.754405
+2 revert back
+Upsize bert (2)
+Adjust memory bandwidth
+resnet: Cores: 13 LLC: 3 MB: 20
+bert: Cores: 19 LLC: 12 MB: 80
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 13.890995
+bert: 136.352644
+resnet: 13.893022
+bert: 135.484013
+resnet: 13.901428
+bert: 136.951321
+resnet: 13.886066
+bert: 136.747431
+resnet: 13.907591
+bert: 136.779376
+Upsize bert (2)
+Adjust memory bandwidth
+resnet: Cores: 13 LLC: 3 MB: 10
+bert: Cores: 19 LLC: 12 MB: 90
+
+Make a decision! 2
+Start executing for 5 times
+resnet: 4484.364473
+bert: 136.40132
+resnet: 4675.782513
+bert: 138.256954

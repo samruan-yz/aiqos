@@ -1,0 +1,96 @@
+Start executing at 2024-02-15 21:15:20
+Make a decision! 0
+Start executing for 1 times
+resnet: 41.009419
+bert: 119.491977
+Upsize resnet (0)
+Adjust memory bandwidth
+resnet: Cores: 16 LLC: 8 MB: 60
+bert: Cores: 16 LLC: 7 MB: 40
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 41.800941
+bert: 119.594836
+resnet: 41.327123
+bert: 121.160369
+resnet: 36.334207
+bert: 119.777295
+resnet: 43.34768
+bert: 119.286569
+resnet: 41.379833
+bert: 121.160152
+1 revert back
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 17 LLC: 8 MB: 60
+bert: Cores: 15 LLC: 7 MB: 40
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 26.854286
+bert: 123.307974
+resnet: 25.875641
+bert: 121.238932
+resnet: 26.561313
+bert: 120.478027
+resnet: 26.730732
+bert: 122.418813
+resnet: 26.074265
+bert: 120.29848
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 18 LLC: 8 MB: 60
+bert: Cores: 14 LLC: 7 MB: 40
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 20.298361
+bert: 120.39809
+resnet: 19.564116
+bert: 119.560371
+resnet: 19.078069
+bert: 119.852229
+resnet: 19.110019
+bert: 121.349471
+resnet: 19.686508
+bert: 120.469981
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 19 LLC: 8 MB: 60
+bert: Cores: 13 LLC: 7 MB: 40
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 14.446029
+bert: 120.65629
+resnet: 15.518851
+bert: 120.404813
+resnet: 14.779856
+bert: 121.167782
+resnet: 14.931643
+bert: 122.526603
+resnet: 15.048542
+bert: 123.534716
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 20 LLC: 8 MB: 60
+bert: Cores: 12 LLC: 7 MB: 40
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 13.338518
+bert: 120.756218
+resnet: 13.279627
+bert: 121.295922
+resnet: 13.598791
+bert: 122.39026
+resnet: 13.272656
+bert: 121.672698
+resnet: 13.302791
+bert: 122.236139
+All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.
+Current slack is 0.2.
+resnet: Cores: 20 LLC: 8 MB: 60
+bert: Cores: 12 LLC: 7 MB: 40
+
