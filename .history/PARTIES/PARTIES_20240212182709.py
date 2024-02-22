@@ -188,9 +188,6 @@ def makeDecision():
             file.write(f"Start executing for {TOLERANCE} times\n")
         for i in range(TOLERANCE):
             wait()
-            if TAGS == False: # Check whether it exceed timelimit or not
-                #这里应该是根据上一次的upsize的结果来upsize相同的内容
-                upSize(helpID)
             if Lat[helpID] < cur:
                 cnt += 1
             else:
@@ -451,9 +448,6 @@ def getLat():
                 # print("  --", APP[i], ":", Lat[i], "(", Slack[i], LSlack[i], ")")]
                 with open(LOG_FILE, "a") as record:
                     record.write(f"{APP[i]}: {float(values[13])}\n")
-    else:
-        with open(LOG_FILE, "a") as file:
-            file.write(f"Exceeded time limit, skipping the rest of round {ROUND}.\n")
     
 
 

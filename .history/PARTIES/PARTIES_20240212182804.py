@@ -188,9 +188,6 @@ def makeDecision():
             file.write(f"Start executing for {TOLERANCE} times\n")
         for i in range(TOLERANCE):
             wait()
-            if TAGS == False: # Check whether it exceed timelimit or not
-                #这里应该是根据上一次的upsize的结果来upsize相同的内容
-                upSize(helpID)
             if Lat[helpID] < cur:
                 cnt += 1
             else:

@@ -46,7 +46,7 @@ def parse_arguments():
 #     "memcached": 600000,
 #     "mongodb": 300000000,
 # }
-TIMELIMITS = 300 # 5 min time limit. If can't find solution in 5 mintues, terminate the program.
+TIMELIMITS = 60 # 5 min time limit. If can't find solution in 5 mintues, terminate the program.
 TAGS = False
 ROUND = 0
 INTERVAL = 0.1  # Frequency of monitoring, unit is second

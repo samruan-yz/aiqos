@@ -188,15 +188,19 @@ def makeDecision():
             file.write(f"Start executing for {TOLERANCE} times\n")
         for i in range(TOLERANCE):
             wait()
-            if TAGS == False: # Check whether it exceed timelimit or not
-                #这里应该是根据上一次的upsize的结果来upsize相同的内容
-                upSize(helpID)
             if Lat[helpID] < cur:
                 cnt += 1
             else:
                 cnt -= 1
         if cnt <= 0 or (State[helpID] == 2 and FREQ[helpID] == 2300):
+            # return revert(helpID)
             revert(helpID)
+        # else:
+        #     cnt = 0
+        #     wait()
+        #     while (Lat[helpID] < cur):
+        #         cur = Lat[helpID]
+        #         wait()
         helpID = victimID = 0
     elif helpID < 0:
         cur = Lat[-helpID]
@@ -216,8 +220,9 @@ def makeDecision():
             else:
                 cnt += 1
         if cnt <= 0:
+            # return revert(-helpID)  # Revert back as it doesn't benefit from this resource
             revert(helpID)
-            wait()
+            #  wait()
             cnt = 0
             print("Start executing for ", TOLERANCE, " times")
             with open(LOG_FILE, "a") as file:
@@ -393,8 +398,8 @@ def wait():
     # sleep(INTERVAL)
     # # Run code here
     # print("Round: ", ROUND)
-    #subprocess.call(["bash", RUN_SCRIPT])
-    run_script(RUN_SCRIPT)
+    subprocess.call(["bash", RUN_SCRIPT])
+    #run_script(RUN_SCRIPT)
     ROUND += 1
     for i in range(1, NUM + 1):
         if LDOWN[i] > 0:
@@ -406,14 +411,12 @@ def wait():
             exit(0)
 
 def wait_init():
-    global INTERVAL, TIMELIMIT, ROUND,TAGS
+    global INTERVAL, TIMELIMIT, ROUND
     # sleep(INTERVAL)
     # # Run code here
     # print("Round: ", ROUND)
-    if ROUND == 0:
-        subprocess.call(["bash", RUN_SCRIPT])
-    else:
-        run_script(RUN_SCRIPT)
+    subprocess.call(["bash", RUN_SCRIPT])
+    #run_script(RUN_SCRIPT)
     ROUND += 1
     for i in range(1, NUM + 1):
         if LDOWN[i] > 0:
@@ -426,35 +429,30 @@ def wait_init():
 
 
 def getLat():
-    global APP, Lat, MLat, LLSlack, LSlack, Slack, QoS, NUM, TAGS, ROUND
-    if TAGS == True or ROUND == 1:
-        with open(LATENCY_FILE, "r") as file:
-            # Skip the first and second line (caption)
-            file.readline()
-            file.readline()
+    global APP, Lat, MLat, LLSlack, LSlack, Slack, QoS, NUM
+    with open(LATENCY_FILE, "r") as file:
+        # Skip the first and second line (caption)
+        file.readline()
+        file.readline()
 
-            # Extract values for the given number of lines
-            for i in range(1, NUM + 1):
-                app = APP[i]
-                if APP[i][-1] == "2":
-                    app = APP[i][:-1]
+        # Extract values for the given number of lines
+        for i in range(1, NUM + 1):
+            app = APP[i]
+            if APP[i][-1] == "2":
+                app = APP[i][:-1]
 
-                line = file.readline().strip()
-                values = line.split()
-                LLSlack[i] = Slack[i]
-                # Convert to float, multiply by 10^6, and store in the dictionary
-                Lat[i] = float(values[13]) * 10**6
-                MLat[i].append(float(values[13]) * 10**6)
-                LSlack[i] = 1 - sum(MLat[i]) * 1.0 / len(MLat[i]) / QoS[i]
+            line = file.readline().strip()
+            values = line.split()
+            LLSlack[i] = Slack[i]
+            # Convert to float, multiply by 10^6, and store in the dictionary
+            Lat[i] = float(values[13]) * 10**6
+            MLat[i].append(float(values[13]) * 10**6)
+            LSlack[i] = 1 - sum(MLat[i]) * 1.0 / len(MLat[i]) / QoS[i]
 
-                Slack[i] = (QoS[i] - Lat[i]) * 1.0 / QoS[i]
-                # print("  --", APP[i], ":", Lat[i], "(", Slack[i], LSlack[i], ")")]
-                with open(LOG_FILE, "a") as record:
-                    record.write(f"{APP[i]}: {float(values[13])}\n")
-    else:
-        with open(LOG_FILE, "a") as file:
-            file.write(f"Exceeded time limit, skipping the rest of round {ROUND}.\n")
-    
+            Slack[i] = (QoS[i] - Lat[i]) * 1.0 / QoS[i]
+            # print("  --", APP[i], ":", Lat[i], "(", Slack[i], LSlack[i], ")")]
+            with open(LOG_FILE, "a") as record:
+                record.write(f"{APP[i]}: {float(values[13])}\n")
 
 
 
