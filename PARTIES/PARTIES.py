@@ -26,8 +26,11 @@ RUN_SCRIPT = "/data1/yufenggu/inference_spr/code/collocation_run_resnet_bert_PAR
 LOG_FILE = "/data1/yufenggu/inference_spr/code/baselines/PARTIES/PARTIES_LOG/parties_resnet_bert_{}_{}.data".format(RESNET_QPS, BERT_QPS)
 
 ROUND = 0
+ITERATION = 0 # Iteration includes 5 rounds
 INTERVAL = 0.1  # Frequency of monitoring, unit is second
 TIMELIMIT = 30  # How long to run this controller, unit is in second.
+TIMELIMITS = 120 # Exit if runs longer than 2min when resource allocation mismatches the QPS setting dramastically
+TAGS = False
 REST = 100
 NUM = 0  # Number of colocated applications
 APP = [None for i in range(10)]  # Application names
@@ -157,7 +160,7 @@ def printState():
 
 
 def makeDecision():
-    global Lat, LSlack, TOLERANCE, LLSlack, REST, Slack, NUM, FREQ, helpID, victimID
+    global Lat, LSlack, TOLERANCE, LLSlack, REST, Slack, NUM, FREQ, helpID, victimID, TAGS, ITERATION
     print("Make a decision! ", helpID)
     with open(LOG_FILE, "a") as file:
         file.write(f"Make a decision! {helpID}\n")
@@ -165,10 +168,13 @@ def makeDecision():
         cur = Lat[helpID]
         cnt = 0
         print("Start executing for ", TOLERANCE, " times")
+        ITERATION += 1
         with open(LOG_FILE, "a") as file:
             file.write(f"Start executing for {TOLERANCE} times\n")
         for i in range(TOLERANCE):
             wait()
+            if TAGS == False:
+                upSize(helpID)
             if Lat[helpID] < cur:
                 cnt += 1
             else:
@@ -187,7 +193,8 @@ def makeDecision():
         cur = Lat[-helpID]
         cnt = 0
         print("Start executing for ", TOLERANCE, " times")
-        with open(LOG_FILE, "w") as file:
+        ITERATION += 1
+        with open(LOG_FILE, "a") as file:
             file.write(f"Start executing for {TOLERANCE} times\n")
         for i in range(TOLERANCE):
             wait()
@@ -206,6 +213,7 @@ def makeDecision():
             #  wait()
             cnt = 0
             print("Start executing for ", TOLERANCE, " times")
+            ITERATION += 1
             with open(LOG_FILE, "a") as file:
                 file.write(f"Start executing for {TOLERANCE} times\n")
             for i in range(TOLERANCE):
@@ -222,6 +230,7 @@ def makeDecision():
                     cnt += 1
             if cnt <= 4:
                 print("Start executing for ", TOLERANCE, " times")
+                ITERATION += 1
                 with open(LOG_FILE, "a") as file:
                     file.write(f"Start executing for {TOLERANCE} times\n")
                 for i in range(TOLERANCE):
@@ -262,11 +271,11 @@ def makeDecision():
             #     file.write("Start executing for 1 times" + "\n")
             # wait()
             print(
-                "All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.\nCurrent slack is 0.2.\n"
+                "All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.\n"
             )
             with open(LOG_FILE, "a") as file:
                 file.write(
-                    "All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting.\nCurrent slack is 0.2.\n"
+                    "All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting after {} iterations.\n".format(ITERATION)
                 )
             return False
     return True
@@ -365,38 +374,55 @@ def downSize(idx):
     return False
 
 def getLat():
-    global APP, Lat, MLat, LLSlack, LSlack, Slack, QoS, NUM
+    global APP, Lat, MLat, LLSlack, LSlack, Slack, QoS, NUM, TAGS
     # print(LATENCY_FILE, flush=True)
     # with open(LOG_FILE, "a") as file:
     #     file.write(LATENCY_FILE)
-    with open(LATENCY_FILE, "r") as file:
-        # Skip the first and second line (caption)
-        file.readline()
-        file.readline()
+    if TAGS == True or ROUND == 1:
+        with open(LATENCY_FILE, "r") as file:
+            # Skip the first and second line (caption)
+            file.readline()
+            file.readline()
 
-        # Extract values for the given number of lines
-        all_violation = 0
-        for i in range(1, NUM + 1):
-            app = APP[i]
-            if APP[i][-1] == "2":
-                app = APP[i][:-1]
+            # Extract values for the given number of lines
+            all_violation = 0
+            for i in range(1, NUM + 1):
+                app = APP[i]
+                if APP[i][-1] == "2":
+                    app = APP[i][:-1]
 
-            line = file.readline().strip()
-            values = line.split()
-            LLSlack[i] = Slack[i]
-            # Convert to float, multiply by 10^6, and store in the dictionary
-            Lat[i] = float(values[13]) * 10**6
-            MLat[i].append(float(values[13]) * 10**6)
-            LSlack[i] = 1 - sum(MLat[i]) * 1.0 / len(MLat[i]) / QoS[i]
+                line = file.readline().strip()
+                values = line.split()
+                LLSlack[i] = Slack[i]
+                # Convert to float, multiply by 10^6, and store in the dictionary
+                Lat[i] = float(values[13]) * 10**6
+                MLat[i].append(float(values[13]) * 10**6)
+                LSlack[i] = 1 - sum(MLat[i]) * 1.0 / len(MLat[i]) / QoS[i]
 
-            Slack[i] = (QoS[i] - Lat[i]) * 1.0 / QoS[i]
-            if Slack[i] < ALL_VIOLATION_LIMIT:
-                all_violation += 1
-            # print("  --", APP[i], ":", Lat[i], "(", Slack[i], LSlack[i], ")", flush=True)
-            with open(LOG_FILE, "a") as record:
-                record.write(f"{APP[i]}: {float(values[13])}\n")
-        if all_violation == NUM:
-            exit(0)
+                Slack[i] = (QoS[i] - Lat[i]) * 1.0 / QoS[i]
+                if Slack[i] < ALL_VIOLATION_LIMIT:
+                    all_violation += 1
+                # print("  --", APP[i], ":", Lat[i], "(", Slack[i], LSlack[i], ")", flush=True)
+                with open(LOG_FILE, "a") as record:
+                    record.write(f"{APP[i]}: {float(values[13])}\n")
+            if all_violation == NUM:
+                exit(0)
+    else:
+        with open(LOG_FILE, "a") as file:
+            file.write(f"Exceeded time limit, skipping the rest of round {ROUND}.\n")
+
+def run_script(script_path):
+    global TIMELIMITS,TAGS
+    try:
+        subprocess.run(['bash', script_path], timeout=TIMELIMITS, check=True)
+        print(f"Script {script_path} completed successfully.")
+        TAGS = True
+    except subprocess.TimeoutExpired:
+        print(f"Script {script_path} exceeded the time limit of {TIMELIMITS} seconds and was terminated.")
+        TAGS = False
+    except subprocess.CalledProcessError:
+        print(f"Script {script_path} failed to run.")
+        TAGS = False
 
 def wait():
     global INTERVAL, TIMELIMIT, ROUND
@@ -405,7 +431,10 @@ def wait():
     # print("Round: ", ROUND, flush=True)
     # with open(LOG_FILE, "a") as file:
     #     file.write("Round: ")
-    subprocess.run(["bash", RUN_SCRIPT])
+    if ROUND == 0:
+        subprocess.run(["bash", RUN_SCRIPT])
+    else:
+        run_script(RUN_SCRIPT)
     # print("Flag", flush=True)
     ROUND += 1
     for i in range(1, NUM + 1):
@@ -576,7 +605,7 @@ def propogateCache(idx=None):
         llc_bin = ["0"] * length
         # Set the specific positions to 1 based on the ways_value
         for i in range(ways_value):
-            print(start_position - i)
+            # print(start_position - i)
             llc_bin[start_position - i] = "1"
         # Convert the list of binary digits to a string and then to its hexadecimal format
         hex_value = hex(int("".join(llc_bin), 2))
