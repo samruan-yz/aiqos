@@ -12,45 +12,8 @@ from scipy.optimize import minimize
 import sklearn.gaussian_process as gp
 import subprocess
 import sys
-
-# Number of LC apps available
-TOT_LC_APPS = 5
-
-# Number of BG apps available
-TOT_BG_APPS = 6
-
-# Number of QPS categories
-N_QPS_CAT = 10
-
-# LC apps
-APP_NAMES = ["img-dnn", "masstree", "memcached", "specjbb", "xapian"]
-
-# QoS requirements of LC apps (time in seconds)
-APP_QOSES = {
-    "img-dnn": 3.0,
-    "masstree": 2.0,
-    "memcached": 225.0,
-    "specjbb": 0.5,
-    "xapian": 12.0,
-}
-# QPS levels
-APP_QPSES = {
-    "img-dnn": list(range(300, 3300, 300)),
-    "masstree": list(range(100, 1100, 100)),
-    "memcached": list(range(20000, 220000, 20000)),
-    "specjbb": list(range(800, 9600, 800)),
-    "xapian": list(range(800, 9600, 800)),
-}
-
-# BG apps
-BCKGRND_APPS = [
-    "blackscholes",
-    "canneal",
-    "fluidanimate",
-    "freqmine",
-    "streamcluster",
-    "swaptions",
-]
+import argparse
+import re
 
 # Number of times acquisition function optimization is restarted
 NUM_RESTARTS = 1
@@ -58,127 +21,41 @@ NUM_RESTARTS = 1
 # Number of maximum iterations (max configurations sampled)
 MAX_ITERS = 20
 
-# Shared Resources hardware configuration:
-# Number of Cores (10 units)
-# Number of Ways (11 units)
-# Percent Memory Bandwidth (10 units)
-
 # Number of resources controlled
 NUM_RESOURCES = 3
 
 # Max values of each resources
-NUM_CORES = 24
-NUM_WAYS = 11
+NUM_CORES = 32
+NUM_WAYS = 16
 MEMORY_BW = 100
 
 # Max units of (cores, LLC ways, memory bandwidth)
-NUM_UNITS = [24, 11, 10]
-
-# Configuration formats
-CONFIGS_CORES = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-    "13",
-    "14",
-    "15",
-    "16",
-    "17",
-    "18",
-    "19",
-    "20",
-    "21",
-    "22",
-    "23",
-    "24",
-]
-CONFIGS_CWAYS = [
-    "0x001",
-    "0x003",
-    "0x007",
-    "0x00f",
-    "0x01f",
-    "0x03f",
-    "0x07f",
-    "0x0ff",
-    "0x1ff",
-    "0x3ff",
-    "0x7ff",
-]
-CONFIGS_MEMBW = ["10", "20", "30", "40", "50", "60", "70", "80", "90", "100"]
-
-# Commands to set hardware allocations
-TASKSET = "sudo taskset -acp "
-COS_CAT_SET1 = 'sudo pqos -e "llc:%s=%s"'
-COS_CAT_SET2 = 'sudo pqos -a "llc:%s=%s"'
-COS_MBG_SET1 = 'sudo pqos -e "mba:%s=%s"'
-COS_MBG_SET2 = 'sudo pqos -a "core:%s=%s"'
-COS_RESET = "sudo pqos -R"
-
-# Commands to get MSRs
-WR_MSR_COMM = "wrmsr -a "
-RD_MSR_COMM = "rdmsr -a -u "
-
-# MSR register requirements
-IA32_PERF_GBL_CTR = "0x38F"  # Need bits 34-32 to be 1
-IA32_PERF_FX_CTRL = "0x38D"  # Need bits to be 0xFFF
-MSR_PERF_FIX_CTR0 = "0x309"
+NUM_UNITS = [32, 16, 10]
 
 # Amount of time to sleep after each sample
 SLEEP_TIME = 2
 
-# Suppress application outputs
-FNULL = open(os.devnull, "w")
-
-# Path to the base directory (if required)
-BASE_DIR = "/path/to/base/directory/"
-
 # All the LC apps being run
-LC_APPS = ["resnet", "bert"]
-
-# Path to the latency files of applications
-LATS_FILES = [
-    BASE_DIR + "tailbench-v0.9/img-dnn/lats.bin",
-    BASE_DIR + "tailbench-v0.9/xapian/lats.bin",
-]
-
-# ALl the BG jobs being runs
-BG_APPS = []
-
-APPS = LC_APPS + BG_APPS
-
-# PIDs of all the applications in order of APPS
-APP_PIDS = ["11475", "11783"]
+LC_APPS = []
 
 # QoSes of LC apps
-# APP_QOSES = [APP_QOSES[a] for a in LC_APPS]
-APP_QOSES = [15.000000, 130.000000]
+APP_QOSES = []
+
+# QPSes of LC apps
+APP_QPSES = []
 
 # Number of apps currently running
-NUM_LC_APPS = len(LC_APPS)
-
-NUM_BG_APPS = len(BG_APPS)
-
-NUM_APPS = NUM_LC_APPS + NUM_BG_APPS
+NUM_APPS = 0
 
 # Total number of parameters
-NUM_PARAMS = NUM_RESOURCES * (NUM_APPS - 1)
+NUM_PARAMS = 0
 
 # Set expected value threshold for termination
 # EI_THRESHOLD = 0.01**NUM_APPS
 EI_THRESHOLD = 0
 
 # Global variable to hold baseline performances
-BASE_PERFS = [0.0] * NUM_APPS
+BASE_PERFS = [0.0]
 
 # Required global variables
 BOUNDS = None
@@ -189,21 +66,11 @@ MODEL = None
 
 OPTIMAL_PERF = None
 
-RESNET_QPS = 27
-BERT_QPS = 7
-
-if len(sys.argv) < 3:
-    print("Usage: script.py param1 param2")
-    sys.exit(1)
-RESNET_QPS = sys.argv[1]
-BERT_QPS = sys.argv[2]
-print(RESNET_QPS + " " + BERT_QPS)
-
 # Added global variables
-LATENCY_FILE = f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/data_point/resnet_bert_search/result_{RESNET_QPS}_{BERT_QPS}.data"
-RUN_SCRIPT = "collocation_run_resnet_bert.sh"
-MAIN_LOG_FILE = f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/CLITE_LOG/clite_result_{RESNET_QPS}_{BERT_QPS}.data"
-RUN_SCRIPT_LOG_FILE = f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/CLITE_LOG/run_script_log_{RESNET_QPS}_{BERT_QPS}.data"
+LATENCY_FILE = ""
+RUN_SCRIPT = ""
+MAIN_LOG_FILE = f""
+
 ONLINE_MODE = True
 
 
@@ -217,7 +84,7 @@ def set_cores(cores):
 
     # Modify the script using CORES
     for i in range(0, NUM_APPS):
-        app_name = APPS[i]
+        app_name = LC_APPS[i]
         cores_range = cores[i]
 
         # Calculate the current core start according to the previous core end
@@ -230,8 +97,6 @@ def set_cores(cores):
             elif line.startswith(app_name + "_core_end"):
                 lines[idx] = f"{app_name}_core_end={current_end}\n"
 
-        # print("Change Core of", APP[i], ": ", len(CORES[i]), "cores")
-
     # Write back
     with open(RUN_SCRIPT, "w") as file:
         file.writelines(lines)
@@ -242,7 +107,7 @@ def set_cways(cways):
         lines = file.readlines()
 
     for i in range(0, NUM_APPS):
-        app_name = APPS[i]
+        app_name = LC_APPS[i]
 
         # Update script based on the WAYS values
         llc_hex = cways[i]
@@ -261,7 +126,7 @@ def set_mbs(membw):
         lines = file.readlines()
 
     for i in range(0, NUM_APPS):
-        app_name = APPS[i]
+        app_name = LC_APPS[i]
 
         # Update script based on the WAYS values
         bw = membw[i]
@@ -304,11 +169,21 @@ def print_initial_connfig(x, lats, ratio, y, idx):
             )
         )
 
-        app1 = f"{APPS[0]:<10} {CONFIGS_CORES[x[0]-1]:<10} {x[1]:<10} {CONFIGS_MEMBW[x[2]-1]:<10} {lats[0]:<10.2f} {ratio[0]:<10.2f}\n"
-        app2 = f"{APPS[1]:<10} {CONFIGS_CORES[24-x[0]-1]:<10} {11-x[1]:<10} {CONFIGS_MEMBW[10-x[2]-1]:<10} {lats[1]:<10.2f} {ratio[1]:<10.2f}\n"
+        apps = ""
+        acc_core = 0
+        acc_llc = 0
+        acc_mem = 0
+        for i in range(NUM_APPS - 1):
+            apps += f"{LC_APPS[i]:<10} {str(x[3*i]):<10} {x[3*i+1]:<10} {str(x[3*i+2]*10):<10} {lats[i]:<10.2f} {ratio[i]:<10.2f}\n"
+            acc_core += x[3*i]
+            acc_llc += x[3*i+1]
+            acc_mem += x[3*i+2]*10
 
-        log_file.write(app1)
-        log_file.write(app2)
+        apps += f"{LC_APPS[NUM_APPS - 1]:<10} {str(NUM_CORES-acc_core):<10} {NUM_WAYS-acc_llc:<10} \
+        {str(MEMORY_BW-acc_mem):<10} {lats[NUM_APPS - 1]:<10.2f} {ratio[NUM_APPS - 1]:<10.2f}\n"
+        
+
+        log_file.write(apps)
         log_file.write(f"Performance score for this config: {y}\n\n")
 
 
@@ -324,26 +199,23 @@ def print_res(x, lats, ratio, y, round, ei):
             )
         )
 
-        app1 = f"{APPS[0]:<10} {CONFIGS_CORES[x[0]-1]:<10} {x[1]:<10} {CONFIGS_MEMBW[x[2]-1]:<10} {lats[0]:<10.2f} {ratio[0]:<10.2f}\n"
-        app2 = f"{APPS[1]:<10} {CONFIGS_CORES[24-x[0]-1]:<10} {11-x[1]:<10} {CONFIGS_MEMBW[10-x[2]-1]:<10} {lats[1]:<10.2f} {ratio[1]:<10.2f}\n"
+        apps = ""
+        acc_core = 0
+        acc_llc = 0
+        acc_mem = 0
+        for i in range(NUM_APPS - 1):
+            apps += f"{LC_APPS[i]:<10} {str(x[3*i]):<10} {x[3*i+1]:<10} {str(x[3*i+2]*10):<10} {lats[i]:<10.2f} {ratio[i]:<10.2f}\n"
+            acc_core += x[3*i]
+            acc_llc += x[3*i+1]
+            acc_mem += x[3*i+2]*10
 
-        log_file.write(app1)
-        log_file.write(app2)
+        apps += f"{LC_APPS[NUM_APPS - 1]:<10} {str(NUM_CORES-acc_core):<10} {NUM_WAYS-acc_llc:<10} \
+        {str(MEMORY_BW-acc_mem):<10} {lats[NUM_APPS - 1]:<10.2f} {ratio[NUM_APPS - 1]:<10.2f}\n"
+        
+
+        log_file.write(apps)
         log_file.write(f"Performance score for this config: {y}\n")
         log_file.write(f"Expected improvement for this config: {ei}\n\n")
-
-
-def log_run_script(idx):
-    global RUN_SCRIPT
-    global RUN_SCRIPT_LOG_FILE
-
-    with open(RUN_SCRIPT, "r") as script_file:
-        script_content = script_file.read()
-
-    with open(RUN_SCRIPT_LOG_FILE, "a") as log_file:
-        log_file.write(f"------ Log for round {idx} ------\n")
-        log_file.write(script_content)
-        log_file.write("\n\n")
 
 
 # This class is used to parse latency files and extract request times, service times, and sojourn times.
@@ -442,22 +314,9 @@ def get_baseline_perfs(configs):
         app_cores = [""] * NUM_APPS
         s = 0
         for j in range(NUM_APPS - 1):
-            # app_cores[j] = ",".join(
-            #     [
-            #         str(c)
-            #         for c in list(range(s, s + p[j]))
-            #         + list(range(s + NUM_UNITS[0], s + p[j] + NUM_UNITS[0]))
-            #     ]
-            # )
             app_cores[j] = [str(c) for c in list(range(s, s + p[j]))]
             s += p[j]
-        # app_cores[NUM_APPS - 1] = ",".join(
-        #     [
-        #         str(c)
-        #         for c in list(range(s, NUM_UNITS[0]))
-        #         + list(range(s + NUM_UNITS[0], NUM_UNITS[0] + NUM_UNITS[0]))
-        #     ]
-        # )
+
         app_cores[NUM_APPS - 1] = [str(c) for c in list(range(s, NUM_UNITS[0]))]
 
         # L3 cache ways allocation of each job
@@ -496,49 +355,20 @@ def get_baseline_perfs(configs):
             s += p[j + 2 * (NUM_APPS - 1)] * 10
         app_membw[NUM_APPS - 1] = str(NUM_UNITS[2] * 10 - s)
 
-        # Set the allocations
-        # for j in range(NUM_APPS):
-        #     taskset_cmnd = TASKSET + app_cores[j] + " " + APP_PIDS[j]
-        #     cos_cat_set1 = COS_CAT_SET1 % (str(j + 1), app_cways[j])
-        #     cos_cat_set2 = COS_CAT_SET2 % (str(j + 1), app_cores[j])
-        #     cos_mBG_set1 = COS_MBG_SET1 % (str(j + 1), app_membw[j])
-        #     cos_mBG_set2 = COS_MBG_SET2 % (str(j + 1), app_cores[j])
-        #     sp.check_output(shlex.split(taskset_cmnd), stderr=FNULL)
-        #     sp.check_output(shlex.split(cos_cat_set1), stderr=FNULL)
-        #     sp.check_output(shlex.split(cos_cat_set2), stderr=FNULL)
-        #     sp.check_output(shlex.split(cos_mBG_set1), stderr=FNULL)
-        #     sp.check_output(shlex.split(cos_mBG_set2), stderr=FNULL)
         set_cores(app_cores)
         set_cways(app_cways)
         set_mbs(app_membw)
-
-        # if i >= NUM_LC_APPS:
-        #     # Reset the IPS counters
-        #     os.system(WR_MSR_COMM + MSR_PERF_FIX_CTR0 + " 0x0")
 
         if ONLINE_MODE:
             subprocess.call(["bash", RUN_SCRIPT])
         else:
             time.sleep(SLEEP_TIME)
-        # Run script here
-        # subprocess.call(["bash", RUN_SCRIPT])
 
-        if i < NUM_LC_APPS:
+        if i < NUM_APPS:
             BASE_PERFS[i] = get_lat(i)
         else:
-            # Get the IPS counters
-            ipsP = os.popen(RD_MSR_COMM + MSR_PERF_FIX_CTR0)
-
-            # Calculate the IPS
-            IPS = 0.0
-            cor = [int(c) for c in app_cores[i].split(",")]
-            ind = 0
-            for line in ipsP.readlines():
-                if ind in cor:
-                    IPS += float(line)
-                ind += 1
-
-            BASE_PERFS[i] = IPS
+            print("Error")
+            exit(1)
 
 
 # Generates a random configuration for resource partitioning.
@@ -563,22 +393,9 @@ def sample_perf(p):
     app_cores = [""] * NUM_APPS
     s = 0
     for j in range(NUM_APPS - 1):
-        # app_cores[j] = ",".join(
-        #     [
-        #         str(c)
-        #         for c in list(range(s, s + p[j]))
-        #         + list(range(s + NUM_UNITS[0], s + p[j] + NUM_UNITS[0]))
-        #     ]
-        # )
         app_cores[j] = [str(c) for c in list(range(s, s + p[j]))]
         s += p[j]
-    # app_cores[NUM_APPS - 1] = ",".join(
-    #     [
-    #         str(c)
-    #         for c in list(range(s, NUM_UNITS[0]))
-    #         + list(range(s + NUM_UNITS[0], NUM_UNITS[0] + NUM_UNITS[0]))
-    #     ]
-    # )
+
     app_cores[NUM_APPS - 1] = [str(c) for c in list(range(s, NUM_UNITS[0]))]
 
     # L3 cache ways allocation of each job
@@ -617,44 +434,26 @@ def sample_perf(p):
         s += p[j + 2 * (NUM_APPS - 1)] * 10
     app_membw[NUM_APPS - 1] = str(NUM_UNITS[2] * 10 - s)
 
-    # Set the allocations
-    # for j in range(NUM_APPS):
-    #     taskset_cmnd = TASKSET + app_cores[j] + " " + APP_PIDS[j]
-    #     cos_cat_set1 = COS_CAT_SET1 % (str(j + 1), app_cways[j])
-    #     cos_cat_set2 = COS_CAT_SET2 % (str(j + 1), app_cores[j])
-    #     cos_mBG_set1 = COS_MBG_SET1 % (str(j + 1), app_membw[j])
-    #     cos_mBG_set2 = COS_MBG_SET2 % (str(j + 1), app_cores[j])
-    #     sp.check_output(shlex.split(taskset_cmnd), stderr=FNULL)
-    #     sp.check_output(shlex.split(cos_cat_set1), stderr=FNULL)
-    #     sp.check_output(shlex.split(cos_cat_set2), stderr=FNULL)
-    #     sp.check_output(shlex.split(cos_mBG_set1), stderr=FNULL)
-    #     sp.check_output(shlex.split(cos_mBG_set2), stderr=FNULL)
     set_cores(app_cores)
     set_cways(app_cways)
     set_mbs(app_membw)
 
-    if NUM_BG_APPS != 0:
-        # Reset the IPS counters
-        os.system(WR_MSR_COMM + MSR_PERF_FIX_CTR0 + " 0x0")
 
     # Wait for some cycles
     if ONLINE_MODE:
         subprocess.call(["bash", RUN_SCRIPT])
     else:
         time.sleep(SLEEP_TIME)
-    # Run script here
-    # subprocess.call(["bash", RUN_SCRIPT])
 
     # If QoS met, qv = [1.0, 1.0, 1.0] = sd
     # If QoS not met, qv = [0.5, 0.5, 0.5], sd = [0.25, 0.25, 0.25]
     # QoS values
-    qv = [1.0] * NUM_LC_APPS
+    qv = [1.0] * NUM_APPS
     # Performance scores
-    sd = [1.0] * NUM_LC_APPS
+    sd = [1.0] * NUM_APPS
     # Lantencys
-    lats = [1.0] * NUM_LC_APPS
-    for j in range(NUM_LC_APPS):
-        # p95 = getLatPct(LATS_FILES[j])
+    lats = [1.0] * NUM_APPS
+    for j in range(NUM_APPS):
         p99 = get_lat(j)
         lats[j] = p99
         if p99 > APP_QOSES[j]:
@@ -666,26 +465,6 @@ def sample_perf(p):
         return qv, 0.5 * stats.mstats.gmean(qv), lats
 
     # Return the final objective function score if QoS met
-    if NUM_BG_APPS == 0:
-        return qv, 0.5 * (min(1.0, stats.mstats.gmean(sd)) + 1.0), lats
-
-    # Get the IPS counters
-    ipsP = os.popen(RD_MSR_COMM + MSR_PERF_FIX_CTR0)
-
-    sd = [0.0] * NUM_BG_APPS
-    for j in range(NUM_BG_APPS):
-        # Calculate the IPS
-        IPS = 0.0
-        cor = [int(c) for c in app_cores[j + NUM_LC_APPS].split(",")]
-        ind = 0
-        for line in ipsP.readlines():
-            if ind in cor:
-                IPS += float(line)
-            ind += 1
-
-        sd[j] = min(1.0, IPS / BASE_PERFS[j + NUM_LC_APPS])
-
-    # Return the final objective function score if BG jobs are present
     return qv, 0.5 * (min(1.0, stats.mstats.gmean(sd)) + 1.0), lats
 
 
@@ -883,8 +662,6 @@ def bayesian_optimization_engine(x0, alpha=1e-5):
         if y> OPTIMAL_PERF:
             OPTIMAL_PERF = y
             optimal_config = next_sample
-
-        log_run_script(n)
     
 
         xp = np.array(x_list)
@@ -921,52 +698,98 @@ def c_lite():
 
 
 def changeQPS():
-    with open(RUN_SCRIPT, "r") as file:
-        script_content = file.readlines()
+    try:
+        with open(RUN_SCRIPT, "r") as file:
+            lines = file.readlines()
 
-    with open(RUN_SCRIPT, "w") as file:
-        for line in script_content:
-            if "for resnet_qps in" in line:
-                file.write(f"for resnet_qps in {RESNET_QPS}\n")
-            elif "for bert_qps in" in line:
-                file.write(f"for bert_qps in {BERT_QPS}\n")
-            else:
-                file.write(line)
+        new_lines = []
+        for line in lines:
+            match = re.search(r"(for\s+(\w+)_qps\s+in\s+)(\d+)", line)
+            if match:
+                app_name = match.group(2)  # Get app name
+                if app_name in LC_APPS:
+                    index = LC_APPS.index(app_name)
+                    app_qps = APP_QPSES[index]  # Get corrosponding QPS
+                    # Replace the number
+                    new_line = re.sub(r"\d+", app_qps, line, 1)
+                    new_lines.append(new_line)
+                    continue
+                else:
+                    raise ValueError(f"Error: '{app_name}' not found in LC_APPS")
+            new_lines.append(line)
+
+        # Write back
+        with open(RUN_SCRIPT, "w") as file:
+            file.writelines(new_lines)
+
+    except ValueError as e:
+        print(e)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 
 def main():
     changeQPS()
-    # Switch on the performance counters
-    # os.system(WR_MSR_COMM + IA32_PERF_GBL_CTR + " 0x70000000F")
-    # os.system(WR_MSR_COMM + IA32_PERF_FX_CTRL + " 0xFFF")
 
     # Execute C-LITE
     num_iters, obj_value, optimal_config = c_lite()
 
-    # Print the header
-    st = ""
-    for a in range(NUM_APPS):
-        st += "App" + str(a) + ","
-    st += "ObjectiveValue" + ","
-    st += "#Iterations"
+    with open(MAIN_LOG_FILE, "w") as log_file:
+        # Print the header
+        st = ""
+        for a in range(NUM_APPS):
+            st += "App" + str(a) + ","
+        st += "ObjectiveValue" + ","
+        st += "#Iterations"
 
-    print(st)
-    log_file.write(st+ "\n")
+        print(st)
+        log_file.write(st+ "\n")
 
-    # Print the final results
-    st = ""
-    for a in LC_APPS:
-        st += a + ","
-    for a in BG_APPS:
-        st += a + ","
-    st += "%.2f" % obj_value + ","
-    st += "%.2f" % num_iters + ","
-    st += optimal_config
+        # Print the final results
+        st = ""
+        for a in LC_APPS:
+            st += a + ","
+        st += "%.2f" % obj_value + ","
+        st += "%.2f" % num_iters + ","
+        st += optimal_config
 
-    print(st)
-    log_file.write(st+ "\n")
+        print(st)
+        log_file.write(st+ "\n")
 
 
 if __name__ == "__main__":
+    # Parse arguments
+    parser = argparse.ArgumentParser(description="Parses global and workload-specific arguments")
+    parser.add_argument("--num_apps", type=int, help="Number of collocation apps", required=True)
+    parser.add_argument("--app_names", nargs="+", help="Name for each app", required=True)
+    parser.add_argument("--app_qos", nargs="+", help="QoS for each app", required=True)
+    parser.add_argument("--app_qps", nargs="+", help="QPS for each app", required=True)
+    parser.add_argument("--lat_folder", help="Path to the latency folder", required=True, default=
+                        f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/data_point/resnet_bert_search/")
+    parser.add_argument("--run_script_path", help="Path to run script folder", required=True, default=
+                        f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/collocation_run_resnet_bert.sh")
+    parser.add_argument("--log", help="Path to log file", required=True, default=
+                        f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/CLITE_LOG/")
+    
+
+    # Print out QoS
+    args = parser.parse_args()
+    print(f"QoS: {', '.join(args.app_qos)}")
+
+    # Parse arguments
+    NUM_APPS = args.num_apps
+    LC_APPS = args.app_names
+    APP_QOSES = args.app_qos
+    APP_QPSES = args.app_qps
+
+    app_qps_str = '_'.join(args.app_qps)
+    LATENCY_FILE = args.lat_folder + "result_" + app_qps_str + ".data"
+    RUN_SCRIPT = args.run_script_path
+    MAIN_LOG_FILE = args.log + "clite_result_" + app_qps_str + ".data"
+
+    # Initialize other global variables
+    NUM_PARAMS = NUM_RESOURCES * (NUM_APPS - 1)
+    BASE_PERFS = [0.0] * NUM_APPS
+
     # Invoke the main function
     main()
