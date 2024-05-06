@@ -1,0 +1,162 @@
+Start executing at 2024-05-05 23:25:54
+Make a decision! 0
+Start executing for 1 times
+resnet: 9.984795
+bert: 113.059776
+Downsize resnet(0)
+Adjust cache
+resnet: Cores: 16 LLC: 7 MB: 50
+bert: Cores: 16 LLC: 7 MB: 50
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 10.021829
+bert: 113.306649
+resnet: 10.018393
+bert: 113.788799
+resnet: 10.046436
+bert: 113.469768
+resnet: 10.003437
+bert: 113.390178
+resnet: 10.05731
+bert: 112.841208
+Downsize resnet(-3)
+Adjust cache
+resnet: Cores: 16 LLC: 6 MB: 50
+bert: Cores: 16 LLC: 7 MB: 50
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 10.087869
+bert: 114.171901
+resnet: 10.087989
+bert: 115.320697
+resnet: 10.044007
+bert: 113.170156
+resnet: 10.027967
+bert: 112.765154
+resnet: 10.050146
+bert: 113.623024
+Downsize resnet(-3)
+Adjust cache
+resnet: Cores: 16 LLC: 5 MB: 50
+bert: Cores: 16 LLC: 7 MB: 50
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 10.157582
+bert: 114.700135
+resnet: 10.131638
+bert: 114.157977
+resnet: 10.127509
+bert: 114.267474
+resnet: 10.130238
+bert: 113.914341
+resnet: 10.130288
+bert: 113.979829
+Downsize resnet(-3)
+Adjust cache
+resnet: Cores: 16 LLC: 4 MB: 50
+bert: Cores: 16 LLC: 7 MB: 50
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 10.212687
+bert: 114.374268
+resnet: 10.215508
+bert: 113.407094
+resnet: 10.180504
+bert: 112.586821
+resnet: 10.205034
+bert: 115.02781
+resnet: 10.230363
+bert: 113.327473
+Downsize resnet(-3)
+Adjust cache
+resnet: Cores: 16 LLC: 3 MB: 50
+bert: Cores: 16 LLC: 7 MB: 50
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 10.362001
+bert: 114.593164
+resnet: 10.361476
+bert: 113.905614
+resnet: 10.316189
+bert: 114.706621
+resnet: 10.321351
+bert: 113.457119
+resnet: 10.305123
+bert: 113.620068
+Downsize resnet(-3)
+Adjust cache
+resnet: Cores: 16 LLC: 2 MB: 50
+bert: Cores: 16 LLC: 7 MB: 50
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 10.573089
+bert: 116.409482
+resnet: 10.52457
+bert: 113.635591
+resnet: 10.507288
+bert: 113.252231
+resnet: 10.473554
+bert: 114.155398
+resnet: 10.477992
+bert: 114.117107
+Downsize resnet(-3)
+Adjust cache
+resnet: Cores: 16 LLC: 1 MB: 50
+bert: Cores: 16 LLC: 7 MB: 50
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 10.934735
+bert: 115.696587
+resnet: 11.089689
+bert: 116.1481
+resnet: 11.078706
+bert: 115.477934
+resnet: 11.013344
+bert: 116.436171
+resnet: 11.074461
+bert: 117.016839
+Downsize resnet(-3)
+Adjust memory bandwidth
+resnet: Cores: 16 LLC: 1 MB: 40
+bert: Cores: 16 LLC: 7 MB: 60
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 11.287275
+bert: 116.189364
+resnet: 11.334821
+bert: 116.297157
+resnet: 11.261931
+bert: 118.85867
+resnet: 11.293336
+bert: 116.090433
+resnet: 11.298139
+bert: 116.779662
+Downsize resnet(-2)
+Adjust memory bandwidth
+resnet: Cores: 16 LLC: 1 MB: 30
+bert: Cores: 16 LLC: 7 MB: 70
+
+Make a decision! -1
+Start executing for 5 times
+resnet: 13.048522
+bert: 118.268987
+resnet: 13.138394
+bert: 116.624686
+resnet: 12.852466
+bert: 117.494695
+resnet: 13.013796
+bert: 117.080159
+resnet: 13.180809
+bert: 116.599553
+All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting after 9 iterations.
+resnet: Cores: 16 LLC: 1 MB: 30
+bert: Cores: 16 LLC: 7 MB: 70
+

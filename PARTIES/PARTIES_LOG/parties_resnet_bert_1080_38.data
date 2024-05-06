@@ -1,8 +1,8 @@
-Start executing at 2024-02-23 17:40:30
+Start executing at 2024-05-06 01:47:57
 Make a decision! 0
 Start executing for 1 times
-resnet: 11.269552
-bert: 119.600618
+resnet: 11.250156
+bert: 114.370648
 Downsize resnet(0)
 Adjust memory bandwidth
 resnet: Cores: 16 LLC: 8 MB: 40
@@ -10,16 +10,16 @@ bert: Cores: 16 LLC: 7 MB: 60
 
 Make a decision! -1
 Start executing for 5 times
-resnet: 11.666178
-bert: 117.619364
-resnet: 11.657627
-bert: 119.008121
-resnet: 11.605162
-bert: 117.333568
-resnet: 11.675319
-bert: 118.643568
-resnet: 11.637561
-bert: 116.169113
+resnet: 11.595611
+bert: 116.10468
+resnet: 11.628253
+bert: 115.534099
+resnet: 11.732136
+bert: 115.786736
+resnet: 11.723004
+bert: 115.805965
+resnet: 11.660762
+bert: 115.713624
 Downsize resnet(-2)
 Adjust memory bandwidth
 resnet: Cores: 16 LLC: 8 MB: 30
@@ -27,16 +27,16 @@ bert: Cores: 16 LLC: 7 MB: 70
 
 Make a decision! -1
 Start executing for 5 times
-resnet: 13.977444
-bert: 118.815585
-resnet: 14.057002
-bert: 120.116815
-resnet: 14.021735
-bert: 118.180619
-resnet: 13.925127
-bert: 117.073705
-resnet: 14.008088
-bert: 119.158367
+resnet: 14.06456
+bert: 115.2168
+resnet: 14.017434
+bert: 115.0186
+resnet: 13.952533
+bert: 116.414746
+resnet: 14.070845
+bert: 115.561312
+resnet: 14.092375
+bert: 114.050631
 All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting after 2 iterations.
 resnet: Cores: 16 LLC: 8 MB: 30
 bert: Cores: 16 LLC: 7 MB: 70

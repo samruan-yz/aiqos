@@ -1,8 +1,8 @@
-Start executing at 2024-02-23 17:55:40
+Start executing at 2024-05-06 02:37:52
 Make a decision! 0
 Start executing for 1 times
-resnet: 14.027667
-bert: 119.459113
+resnet: 13.999103
+bert: 114.132393
 All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting after 0 iterations.
 resnet: Cores: 16 LLC: 8 MB: 50
 bert: Cores: 16 LLC: 7 MB: 50

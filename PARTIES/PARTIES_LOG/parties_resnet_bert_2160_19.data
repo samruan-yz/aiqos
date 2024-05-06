@@ -1,179 +1,215 @@
-Start executing at 2024-02-23 20:53:28
+Start executing at 2024-05-06 05:14:15
 Make a decision! 0
 Start executing for 1 times
-resnet: 6603.898576
-bert: 109.606581
+resnet: 7149.173805
+bert: 108.988256
 Upsize resnet (0)
-Adjust core
-resnet: Cores: 17 LLC: 8 MB: 50
-bert: Cores: 15 LLC: 7 MB: 50
+Adjust cache
+resnet: Cores: 16 LLC: 9 MB: 50
+bert: Cores: 16 LLC: 6 MB: 50
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 5190.401648
-bert: 110.880146
-resnet: 5084.540614
-bert: 109.510591
-resnet: 5142.080777
-bert: 110.076823
-resnet: 5212.242508
-bert: 110.766645
-resnet: 5085.920289
-bert: 110.357986
+resnet: 7175.317381
+bert: 110.68499
+resnet: 6743.248173
+bert: 110.68847
+resnet: 7306.153664
+bert: 110.308841
+resnet: 7292.388031
+bert: 110.830015
+resnet: 6723.686475
+bert: 110.309518
+1 revert back
+Upsize resnet (2)
+Adjust memory bandwidth
+resnet: Cores: 16 LLC: 9 MB: 60
+bert: Cores: 16 LLC: 6 MB: 40
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 6969.961072
+bert: 110.878177
+resnet: 6766.741344
+bert: 111.062929
+resnet: 7026.008823
+bert: 111.540875
+resnet: 7243.151151
+bert: 112.164391
+resnet: 6965.998133
+bert: 111.759759
+1 revert back
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 18 LLC: 8 MB: 50
-bert: Cores: 14 LLC: 7 MB: 50
+resnet: Cores: 17 LLC: 9 MB: 60
+bert: Cores: 15 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 3659.998627
-bert: 110.882649
-resnet: 3704.324065
-bert: 111.339725
-resnet: 3732.383803
-bert: 112.367099
-resnet: 3735.249961
-bert: 111.14208
-resnet: 3727.035284
-bert: 111.147953
+resnet: 5811.406294
+bert: 112.008675
+resnet: 5241.26252
+bert: 111.975574
+resnet: 5807.530251
+bert: 111.762815
+resnet: 5845.195489
+bert: 111.702009
+resnet: 5567.759433
+bert: 111.205673
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 19 LLC: 8 MB: 50
-bert: Cores: 13 LLC: 7 MB: 50
+resnet: Cores: 18 LLC: 9 MB: 60
+bert: Cores: 14 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 2314.012959
-bert: 111.327102
-resnet: 2281.78691
-bert: 111.426153
-resnet: 2292.566051
-bert: 111.271732
-resnet: 2357.529209
-bert: 111.078749
-resnet: 2270.407694
-bert: 110.739483
+resnet: 3998.113067
+bert: 111.466094
+resnet: 4071.820476
+bert: 111.582209
+resnet: 4050.745301
+bert: 112.714593
+resnet: 4202.451329
+bert: 114.233866
+resnet: 4078.537159
+bert: 110.991757
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 20 LLC: 8 MB: 50
-bert: Cores: 12 LLC: 7 MB: 50
+resnet: Cores: 19 LLC: 9 MB: 60
+bert: Cores: 13 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 1167.944043
-bert: 111.768471
-resnet: 1108.644242
-bert: 112.320952
-resnet: 1002.537372
-bert: 112.468824
-resnet: 939.452126
-bert: 111.235872
-resnet: 1113.12332
-bert: 111.883457
+resnet: 2469.536214
+bert: 112.34604
+resnet: 2427.473202
+bert: 113.32654
+resnet: 2410.213711
+bert: 113.348411
+resnet: 2594.895514
+bert: 113.705439
+resnet: 2345.96399
+bert: 112.97566
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 21 LLC: 8 MB: 50
-bert: Cores: 11 LLC: 7 MB: 50
+resnet: Cores: 20 LLC: 9 MB: 60
+bert: Cores: 12 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 223.974662
-bert: 112.503229
-resnet: 315.823377
-bert: 113.142003
-resnet: 293.470657
-bert: 113.326241
-resnet: 263.839881
-bert: 112.941297
-resnet: 264.975296
-bert: 112.220218
+resnet: 952.878492
+bert: 112.499991
+resnet: 1048.572575
+bert: 112.403844
+resnet: 1028.075867
+bert: 113.737918
+resnet: 885.739294
+bert: 113.931075
+resnet: 1018.278301
+bert: 113.948903
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 22 LLC: 8 MB: 50
-bert: Cores: 10 LLC: 7 MB: 50
+resnet: Cores: 21 LLC: 9 MB: 60
+bert: Cores: 11 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 33.965077
-bert: 112.968764
-resnet: 33.23332
-bert: 113.120372
-resnet: 36.463799
-bert: 114.061648
-resnet: 33.646042
-bert: 113.053767
-resnet: 32.487984
-bert: 113.46021
+resnet: 285.776062
+bert: 114.291669
+resnet: 369.683308
+bert: 114.724977
+resnet: 349.467506
+bert: 114.468512
+resnet: 312.901561
+bert: 114.777028
+resnet: 347.927082
+bert: 114.766994
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 23 LLC: 8 MB: 50
-bert: Cores: 9 LLC: 7 MB: 50
+resnet: Cores: 22 LLC: 9 MB: 60
+bert: Cores: 10 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 22.317465
-bert: 113.423476
-resnet: 23.712676
-bert: 113.180704
-resnet: 23.071701
-bert: 113.305975
-resnet: 23.104158
-bert: 113.06446
-resnet: 22.996315
-bert: 113.506706
+resnet: 38.770439
+bert: 114.814812
+resnet: 58.106016
+bert: 116.02955
+resnet: 40.695574
+bert: 114.900432
+resnet: 36.43486
+bert: 114.816238
+resnet: 32.241019
+bert: 115.854645
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 24 LLC: 8 MB: 50
-bert: Cores: 8 LLC: 7 MB: 50
+resnet: Cores: 23 LLC: 9 MB: 60
+bert: Cores: 9 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 18.863901
-bert: 113.718982
-resnet: 18.183935
-bert: 113.672477
-resnet: 18.238172
-bert: 113.076053
-resnet: 18.15622
-bert: 112.883535
-resnet: 18.706925
-bert: 113.571454
+resnet: 20.582359
+bert: 114.913069
+resnet: 20.434295
+bert: 115.020529
+resnet: 22.260582
+bert: 115.073084
+resnet: 20.560931
+bert: 116.129893
+resnet: 20.620403
+bert: 115.34336
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 25 LLC: 8 MB: 50
-bert: Cores: 7 LLC: 7 MB: 50
+resnet: Cores: 24 LLC: 9 MB: 60
+bert: Cores: 8 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 15.534343
-bert: 114.356179
-resnet: 16.309532
-bert: 113.521877
-resnet: 16.316208
-bert: 113.668865
-resnet: 16.720627
-bert: 113.346826
-resnet: 16.40874
-bert: 114.351039
+resnet: 17.321429
+bert: 115.166344
+resnet: 17.087467
+bert: 115.547469
+resnet: 16.747918
+bert: 114.348669
+resnet: 17.105846
+bert: 115.595115
+resnet: 17.381235
+bert: 115.144892
 Upsize resnet (1)
 Adjust core
-resnet: Cores: 26 LLC: 8 MB: 50
-bert: Cores: 6 LLC: 7 MB: 50
+resnet: Cores: 25 LLC: 9 MB: 60
+bert: Cores: 7 LLC: 6 MB: 40
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 14.855202
-bert: 116.637253
-resnet: 14.892637
-bert: 117.320152
-resnet: 14.620709
-bert: 115.481572
-resnet: 15.083523
-bert: 118.586669
-resnet: 14.598596
-bert: 116.676072
-All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting after 10 iterations.
-resnet: Cores: 26 LLC: 8 MB: 50
-bert: Cores: 6 LLC: 7 MB: 50
+resnet: 15.309184
+bert: 115.095683
+resnet: 15.656173
+bert: 117.050497
+resnet: 15.095321
+bert: 114.922005
+resnet: 15.354663
+bert: 115.229738
+resnet: 15.288159
+bert: 114.115234
+Upsize resnet (1)
+Adjust core
+resnet: Cores: 26 LLC: 9 MB: 60
+bert: Cores: 6 LLC: 6 MB: 40
+
+Make a decision! 1
+Start executing for 5 times
+resnet: 13.92873
+bert: 116.941195
+resnet: 13.904952
+bert: 120.251447
+resnet: 14.43471
+bert: 118.458937
+resnet: 13.919532
+bert: 123.103909
+resnet: 14.121974
+bert: 120.838815
+All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting after 12 iterations.
+resnet: Cores: 26 LLC: 9 MB: 60
+bert: Cores: 6 LLC: 6 MB: 40
 

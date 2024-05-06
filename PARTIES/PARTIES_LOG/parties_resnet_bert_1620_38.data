@@ -1,8 +1,8 @@
-Start executing at 2024-02-23 18:46:08
+Start executing at 2024-05-06 03:04:13
 Make a decision! 0
 Start executing for 1 times
-resnet: 41.175534
-bert: 119.796616
+resnet: 42.770243
+bert: 116.281059
 Upsize resnet (0)
 Adjust core
 resnet: Cores: 17 LLC: 8 MB: 50
@@ -10,16 +10,16 @@ bert: Cores: 15 LLC: 7 MB: 50
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 27.207653
-bert: 118.661908
-resnet: 26.887029
-bert: 119.787803
-resnet: 27.845903
-bert: 120.396813
-resnet: 27.517716
-bert: 119.477228
-resnet: 27.289972
-bert: 120.495803
+resnet: 25.628818
+bert: 116.93027
+resnet: 24.293434
+bert: 116.438209
+resnet: 23.65675
+bert: 117.015844
+resnet: 25.399561
+bert: 117.725002
+resnet: 24.668355
+bert: 118.814259
 Upsize resnet (1)
 Adjust core
 resnet: Cores: 18 LLC: 8 MB: 50
@@ -27,16 +27,16 @@ bert: Cores: 14 LLC: 7 MB: 50
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 20.027292
-bert: 121.862075
-resnet: 19.992001
-bert: 120.630939
-resnet: 19.099247
-bert: 119.945036
-resnet: 19.310407
-bert: 121.491366
-resnet: 19.290636
-bert: 120.991228
+resnet: 17.823375
+bert: 120.610489
+resnet: 18.501529
+bert: 116.995416
+resnet: 18.094352
+bert: 117.123673
+resnet: 17.890834
+bert: 117.434027
+resnet: 18.517438
+bert: 117.903925
 Upsize resnet (1)
 Adjust core
 resnet: Cores: 19 LLC: 8 MB: 50
@@ -44,16 +44,16 @@ bert: Cores: 13 LLC: 7 MB: 50
 
 Make a decision! 1
 Start executing for 5 times
-resnet: 14.741878
-bert: 119.660306
-resnet: 14.648149
-bert: 121.121741
-resnet: 14.728146
-bert: 123.420931
-resnet: 15.108562
-bert: 122.785896
-resnet: 14.642317
-bert: 123.461527
+resnet: 14.910443
+bert: 120.565067
+resnet: 14.549079
+bert: 120.366544
+resnet: 14.666516
+bert: 118.340623
+resnet: 14.456044
+bert: 117.95829
+resnet: 14.567877
+bert: 120.18292
 All QoS are met, and slack for each process is not big enough to do downsizing. Program exiting after 3 iterations.
 resnet: Cores: 19 LLC: 8 MB: 50
 bert: Cores: 13 LLC: 7 MB: 50

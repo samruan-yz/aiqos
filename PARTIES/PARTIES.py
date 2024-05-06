@@ -23,7 +23,7 @@ TOTAL_LLC = int(sys.argv[4])
 CONFIG = "/data1/yufenggu/inference_spr/code/baselines/PARTIES/config.txt"  # default path to the input config.txt file
 LATENCY_FILE = "/data1/yufenggu/inference_spr/code/data_point/resnet_bert_search/PARTIES_{}_{}.data".format(RESNET_QPS, BERT_QPS)
 RUN_SCRIPT = "/data1/yufenggu/inference_spr/code/collocation_run_resnet_bert_PARTIES.sh"
-LOG_FILE = "/data1/yufenggu/inference_spr/code/baselines/PARTIES/PARTIES_LOG/parties_resnet_bert_{}_{}.data".format(RESNET_QPS, BERT_QPS)
+LOG_FILE = "/data1/yufenggu/inference_spr/code/baselines/PARTIES/PARTIES_LOG/parties_resnet_bert_{}_{}.txt".format(RESNET_QPS, BERT_QPS)
 
 ROUND = 0
 ITERATION = 0 # Iteration includes 5 rounds
@@ -200,6 +200,7 @@ def makeDecision():
             wait()
             flag = True
             for j in range(1, NUM + 1):
+                # if Slack[j] < 0.05:
                 if Slack[j] < 0:
                     flag = False
                     break
