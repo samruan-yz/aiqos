@@ -26,11 +26,11 @@ NUM_RESOURCES = 3
 
 # Max values of each resources
 NUM_CORES = 32
-NUM_WAYS = 16
+NUM_WAYS = 15
 MEMORY_BW = 100
 
 # Max units of (cores, LLC ways, memory bandwidth)
-NUM_UNITS = [32, 16, 10]
+NUM_UNITS = [32, 15, 10]
 
 # Amount of time to sleep after each sample
 SLEEP_TIME = 2
@@ -165,7 +165,7 @@ def print_initial_connfig(x, lats, ratio, y, idx):
         log_file.write(f"------Result for initial config {idx}------\n")
         log_file.write(
             "{:<10} {:<10} {:<10} {:<10} {:<10} {:<10}\n".format(
-                "Task", "Cores", "LLCways", "MemBW", "QoS", "Ratio"
+                "Task", "Cores", "LLCways", "MemBW", "Lat", "Ratio"
             )
         )
 
@@ -283,6 +283,8 @@ def gen_bounds_and_constraints():
                 + (NUM_UNITS[r] - 1),
             }
         )
+    
+    # print("BOUNDS", BOUNDS, "CONSTS", CONSTS)
 
 
 # Generates initial configurations for resource partitioning.
@@ -299,6 +301,8 @@ def gen_initial_configs():
         for j in range(NUM_APPS - 1):
             equal_partition.append(int(NUM_UNITS[r] / NUM_APPS))
     configs.append(equal_partition)
+
+    print(configs)
 
     return configs
 
@@ -678,6 +682,7 @@ def bayesian_optimization_engine(x0, alpha=1e-5):
         if ei < EI_THRESHOLD or np.max(yp) >= 0.99:
             break
 
+    print(optimal_config)
     return n + 1, np.max(yp), optimal_config
 
 
@@ -764,17 +769,16 @@ if __name__ == "__main__":
     parser.add_argument("--app_names", nargs="+", help="Name for each app", required=True)
     parser.add_argument("--app_qos", nargs="+", help="QoS for each app", required=True)
     parser.add_argument("--app_qps", nargs="+", help="QPS for each app", required=True)
-    parser.add_argument("--lat_folder", help="Path to the latency folder", required=True, default=
-                        f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/data_point/resnet_bert_search/")
-    parser.add_argument("--run_script_path", help="Path to run script folder", required=True, default=
-                        f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/collocation_run_resnet_bert.sh")
-    parser.add_argument("--log", help="Path to log file", required=True, default=
-                        f"/data3/ydil/aiqos/inference_results_v1.1/closed/Intel/code/CLITE_LOG/")
+    parser.add_argument("--lat_folder", help="Path to the latency folder", default=
+                        f"/data1/yufenggu/inference_spr/code/data_point/resnet_bert_search/")
+    parser.add_argument("--run_script_path", help="Path to run script folder", default=
+                        f"/data1/yufenggu/inference_spr/code/collocation_run_resnet_bert_CLITE.sh")
+    parser.add_argument("--log", help="Path to log file", default=
+                        f"/data1/yufenggu/inference_spr/code/data_point/CLITE_LOG/")
     
 
     # Print out QoS
     args = parser.parse_args()
-    print(f"QoS: {', '.join(args.app_qos)}")
 
     # Parse arguments
     NUM_APPS = args.num_apps
@@ -783,13 +787,17 @@ if __name__ == "__main__":
     APP_QPSES = args.app_qps
 
     app_qps_str = '_'.join(args.app_qps)
-    LATENCY_FILE = args.lat_folder + "result_" + app_qps_str + ".data"
+    LATENCY_FILE = args.lat_folder + "CLITE_" + app_qps_str + ".data"
     RUN_SCRIPT = args.run_script_path
-    MAIN_LOG_FILE = args.log + "clite_result_" + app_qps_str + ".data"
+    MAIN_LOG_FILE = args.log + "clite_resnet_bert_" + app_qps_str + ".txt"
 
     # Initialize other global variables
     NUM_PARAMS = NUM_RESOURCES * (NUM_APPS - 1)
     BASE_PERFS = [0.0] * NUM_APPS
+
+    for i in range(NUM_APPS):
+        APP_QOSES[i] = int(APP_QOSES[i])
+    print(NUM_APPS, LC_APPS, APP_QOSES, APP_QPSES)
 
     # Invoke the main function
     main()
